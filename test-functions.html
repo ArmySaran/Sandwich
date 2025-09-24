@@ -7,12 +7,12 @@
     <h1>Testing Navigation Functions</h1>
     <button onclick="testSwitchScreen()">Test switchScreen</button>
     <div id="test-results"></div>
-    
+
     <script>
         // Load the main HTML file's script in an iframe to test
         function testSwitchScreen() {
             const results = document.getElementById('test-results');
-            
+
             // Check if switchScreen is available in parent window
             if (typeof parent.switchScreen === 'function') {
                 results.innerHTML = '✅ switchScreen function is available!';
@@ -21,11 +21,11 @@
             } else {
                 results.innerHTML = '❌ switchScreen function is NOT available';
             }
-            
+
             console.log('switchScreen type:', typeof switchScreen);
             console.log('window.switchScreen type:', typeof window.switchScreen);
         }
-        
+
         // Test database variable
         setTimeout(() => {
             console.log('Testing db variable...');
