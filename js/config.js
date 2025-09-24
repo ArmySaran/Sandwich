@@ -3,7 +3,7 @@ const CONFIG = {
     // Supabase configuration - Complete and ready for production
     supabase: {
         url: 'https://gefvfsmbbohzsypzckjj.supabase.co', // ✅ Your project URL
-        key: 'sb_publishable_adup3tGa4qTROArUeMG1cQ_xYwLfAC0' // ✅ Your publishable key
+        key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdlZnZmc21iYm9oenN5cHpja2pqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg2ODc4NTIsImV4cCI6MjA3NDI2Mzg1Mn0.PAlwMmS5dBW9zcBjx5P1TH8NU5LkonvBNS75LgeFzxU' // ✅ Your anon/public key
     },
 
     // Application settings

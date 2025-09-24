@@ -82,8 +82,8 @@ Update `js/config.js`:
 ```javascript
 const CONFIG = {
     supabase: {
-        url: 'https://your-project-id.supabase.co',
-        key: 'your-anon-key-here'
+        url: 'https://gefvfsmbbohzsypzckjj.supabase.co',
+        key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdlZnZmc21iYm9oenN5cHpja2pqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg2ODc4NTIsImV4cCI6MjA3NDI2Mzg1Mn0.PAlwMmS5dBW9zcBjx5P1TH8NU5LkonvBNS75LgeFzxU'
     },
     app: {
         name: '🥪 ร้าน Sandwich ตัวกลม',

@@ -40,13 +40,13 @@ This will create:
 ## 4. Configure Your App
 
 1. Open `js/config.js` in your project
-2. Replace the placeholder values:
+2. Update the configuration values (already configured for this project):
 
 ```javascript
 const CONFIG = {
     supabase: {
-        url: 'https://your-actual-project-id.supabase.co',
-        key: 'your-actual-anon-key-here'
+        url: 'https://gefvfsmbbohzsypzckjj.supabase.co', // ✅ Production URL
+        key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdlZnZmc21iYm9oenN5cHpja2pqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg2ODc4NTIsImV4cCI6MjA3NDI2Mzg1Mn0.PAlwMmS5dBW9zcBjx5P1TH8NU5LkonvBNS75LgeFzxU' // ✅ Production Anon Key
     },
     // ... rest of config
 }
@@ -82,8 +82,8 @@ For GitHub Pages deployment:
 
 1. Go to your repository **Settings** > **Secrets and variables** > **Actions**
 2. Add repository secrets:
-   - `SUPABASE_URL`: Your project URL
-   - `SUPABASE_ANON_KEY`: Your anon key
+   - `SUPABASE_URL`: `https://gefvfsmbbohzsypzckjj.supabase.co`
+   - `SUPABASE_ANON_KEY`: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdlZnZmc21iYm9oenN5cHpja2pqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg2ODc4NTIsImV4cCI6MjA3NDI2Mzg1Mn0.PAlwMmS5dBW9zcBjx5P1TH8NU5LkonvBNS75LgeFzxU`
 
 Then update your `js/config.js` to use these in production:
 
@@ -91,11 +91,11 @@ Then update your `js/config.js` to use these in production:
 const CONFIG = {
     supabase: {
         url: window.location.hostname.includes('.github.io')
-            ? 'https://your-project-id.supabase.co'
-            : 'https://your-project-id.supabase.co',
+            ? 'https://gefvfsmbbohzsypzckjj.supabase.co'
+            : 'https://gefvfsmbbohzsypzckjj.supabase.co',
         key: window.location.hostname.includes('.github.io')
-            ? 'your-anon-key'
-            : 'your-anon-key'
+            ? 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdlZnZmc21iYm9oenN5cHpja2pqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg2ODc4NTIsImV4cCI6MjA3NDI2Mzg1Mn0.PAlwMmS5dBW9zcBjx5P1TH8NU5LkonvBNS75LgeFzxU'
+            : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdlZnZmc21iYm9oenN5cHpja2pqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg2ODc4NTIsImV4cCI6MjA3NDI2Mzg1Mn0.PAlwMmS5dBW9zcBjx5P1TH8NU5LkonvBNS75LgeFzxU'
     }
 }
 ```

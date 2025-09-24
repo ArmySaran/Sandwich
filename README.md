@@ -11,12 +11,14 @@
 ## 🎨 Design Transformation Summary
 
 ### Before & After
+
 - **Previous**: Gradient background with blue/purple theme
 - **Current**: Clean white background with purple (#8b5cf6, #a855f7) as primary color
 - **Icons**: Added emojis and modern visual indicators throughout
 - **Animation**: Floating cards, hover effects, and smooth transitions
 
 ### Color Scheme
+
 ```css
 Primary Purple: #8b5cf6
 Secondary Purple: #a855f7
@@ -26,11 +28,12 @@ Accent Colors:
   - Green: #10b981
   - Orange: #f59e0b
   - Red: #ef4444
+text
 ```
 
 ## 📁 Project Structure
 
-```
+```text
 SW/
 ├── index.html          # Main frontend application
 ├── setup_database.gs   # Google Apps Script backend
@@ -40,24 +43,28 @@ SW/
 ## 🚀 Deployment Instructions
 
 ### Step 1: Supabase Database Setup
+
 1. Go to [supabase.com](https://supabase.com) and create a new project
 2. Copy the Project URL and Anon/Public key from Settings > API
 3. In Supabase SQL Editor, run the contents of `sql/schema.sql`
 4. Verify all tables, policies, and sample data are created
 
 ### Step 2: Configure Application
+
 1. Update `js/config.js` with your Supabase credentials:
    - Replace `url` with your Project URL
    - Replace `key` with your Anon/Public key
 2. Save the configuration file
 
 ### Step 3: GitHub Pages Deployment
+
 1. Push your code to GitHub repository
 2. Go to Settings > Pages in your GitHub repository
 3. Select "Deploy from a branch" and choose `main` branch
 4. Your app will be available at `https://username.github.io/repository-name/`
 
 ### Step 4: Test Application
+
 1. Visit your deployed GitHub Pages URL
 2. Test all features:
    - User registration/login (Supabase Auth)
@@ -70,24 +77,28 @@ SW/
 ## 🎯 Features Implemented
 
 ### ✅ Core POS Functions
+
 - **Menu Management**: Complete menu system with cost analysis
 - **Sales Processing**: Cart system with checkout functionality
 - **Inventory Tracking**: Real-time stock monitoring with alerts
 - **Expense Management**: Receipt upload and categorization
 
 ### ✅ Advanced Features
+
 - **Dashboard Analytics**: Real-time business metrics
 - **Cost Analysis**: Profit margin calculations
 - **Daily Operations**: Target setting and performance tracking
 - **Reorder Reports**: Automated inventory reordering suggestions
 
 ### ✅ UI/UX Enhancements
+
 - **Modern Design**: Clean white background with purple accents
 - **Glassmorphism Effects**: Backdrop blur and transparent elements
 - **Responsive Layout**: Mobile-first design principles
 - **Smooth Animations**: Floating cards and transition effects
 
 ### ✅ Technical Integration
+
 - **Supabase PostgreSQL**: Modern database with Row Level Security
 - **Real-time Subscriptions**: Live data updates across clients
 - **Progressive Web App**: Offline functionality and mobile optimization
@@ -97,6 +108,7 @@ SW/
 ## 🎨 UI Component Examples
 
 ### Dashboard Cards
+
 ```css
 background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(168, 85, 247, 0.05));
 backdrop-filter: blur(10px);
@@ -104,6 +116,7 @@ border: 1px solid rgba(139, 92, 246, 0.2);
 ```
 
 ### Action Buttons
+
 ```css
 background: linear-gradient(135deg, #8b5cf6, #a855f7);
 color: white;
@@ -112,6 +125,7 @@ box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
 ```
 
 ### Navigation
+
 ```css
 background: rgba(255, 255, 255, 0.95);
 backdrop-filter: blur(10px);
@@ -128,7 +142,9 @@ border-top: 1px solid rgba(139, 92, 246, 0.1);
 ## 🔧 Customization Options
 
 ### Theme Colors
+
 All colors are defined in CSS custom properties:
+
 ```css
 :root {
     --primary: #8b5cf6;
@@ -139,7 +155,9 @@ All colors are defined in CSS custom properties:
 ```
 
 ### Business Settings
+
 Configure in `setup_database.gs`:
+
 - Tax rates
 - Currency formatting
 - Stock thresholds
@@ -148,6 +166,7 @@ Configure in `setup_database.gs`:
 ## 📊 Backend Functions Implemented
 
 ### Data Management
+
 - `setupDatabase()` - Initialize all sheets
 - `addExpense()` - Record new expenses
 - `getRecentExpenses()` - Fetch expense history
@@ -155,6 +174,7 @@ Configure in `setup_database.gs`:
 - `generateReorderReport()` - Create reorder suggestions
 
 ### Analytics
+
 - `getDashboardData()` - Real-time metrics
 - `getInventoryAlerts()` - Stock warnings
 - `getExpenseSummary()` - Financial analysis
