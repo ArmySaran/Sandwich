@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>🥪 ร้าน Sandwich ตัวกลม - ระบบจัดการร้านแซนด์วิช</title>
 
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥪</text></svg>" type="image/svg+xml">
+
     <!-- Enhanced Font Loading Strategy for Reliable Icon Support -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -10040,6 +10043,8 @@
             fileInput.value = '';
         }
 
+        } // End of initializePOSSystem function
+
         // Quick expense form handler function
         function initializeQuickExpenseForm() {
             const expenseForm = document.getElementById('quick-expense-form');
@@ -10637,9 +10642,6 @@
         window.checkout = checkout;
         window.showAlerts = showAlerts;
 
-        // Close any remaining blocks
-        }
-
         // Settings Screen Functions
         function switchSettingsCategory(category) {
             // Remove active class from all tabs
@@ -10788,7 +10790,10 @@
             exportSettings,
             exportAllData,
             importData,
-            updateDataStats
+            updateDataStats,
+            initializePOSSystem,
+            initializeQuickExpenseForm,
+            initializeDatabaseAndApp
         });
 
         // Consolidated single DOMContentLoaded event listener
