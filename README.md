@@ -1,12 +1,11 @@
-<<<<<<< HEAD
 # 🥪 ร้าน Sandwich ตัวกลม - Complete Setup Guide
 
 ## 🎉 PROJECT COMPLETION STATUS
 
-✅ **UI/UX Design**: Complete redesign with clean white background and purple theme
-✅ **Frontend Development**: Fully functional React-like vanilla JavaScript SPA
-✅ **Backend Integration**: Google Apps Script with comprehensive database functions
-✅ **Responsive Design**: Mobile-first approach with glassmorphism effects
+✅ **UI/UX Design**: Complete redesign with clean white background and purple theme  
+✅ **Frontend Development**: Fully functional React-like vanilla JavaScript SPA  
+✅ **Backend Integration**: Supabase PostgreSQL with comprehensive database functions  
+✅ **Responsive Design**: Mobile-first approach with glassmorphism effects  
 ✅ **Feature Implementation**: All placeholder code completed and functional
 
 ## 🎨 Design Transformation Summary
@@ -40,34 +39,28 @@ SW/
 
 ## 🚀 Deployment Instructions
 
-### Step 1: Google Apps Script Setup
-1. Go to [script.google.com](https://script.google.com)
-2. Create a new project named "ร้าน Sandwich ตัวกลม Backend"
-3. Copy contents of `setup_database.gs` into the script editor
-4. Save the project
+### Step 1: Supabase Database Setup
+1. Go to [supabase.com](https://supabase.com) and create a new project
+2. Copy the Project URL and Anon/Public key from Settings > API
+3. In Supabase SQL Editor, run the contents of `sql/schema.sql`
+4. Verify all tables, policies, and sample data are created
 
-### Step 2: Deploy as Web App
-1. Click "Deploy" → "New Deployment"
-2. Settings:
-   - Type: Web app
-   - Execute as: Me (your email)
-   - Who has access: Anyone
-3. Click "Deploy"
-4. Copy the generated Web App URL
+### Step 2: Configure Application
+1. Update `js/config.js` with your Supabase credentials:
+   - Replace `url` with your Project URL
+   - Replace `key` with your Anon/Public key
+2. Save the configuration file
 
-### Step 3: Configure Frontend
-1. Open `index.html`
-2. Find the `apiCall` function (around line 1993)
-3. Replace `'YOUR_WEB_APP_URL_HERE'` with your actual Web App URL
-4. Save the file
+### Step 3: GitHub Pages Deployment
+1. Push your code to GitHub repository
+2. Go to Settings > Pages in your GitHub repository
+3. Select "Deploy from a branch" and choose `main` branch
+4. Your app will be available at `https://username.github.io/repository-name/`
 
-### Step 4: Database Initialization
-1. In Google Apps Script, run the `setupDatabase()` function once
-2. This will create all necessary sheets with sample data
-
-### Step 5: Test Application
-1. Open `index.html` in a web browser
+### Step 4: Test Application
+1. Visit your deployed GitHub Pages URL
 2. Test all features:
+   - User registration/login (Supabase Auth)
    - Dashboard displays
    - Expense tracking
    - Receipt upload
@@ -95,10 +88,11 @@ SW/
 - **Smooth Animations**: Floating cards and transition effects
 
 ### ✅ Technical Integration
-- **Google Sheets Backend**: Comprehensive data management
-- **Receipt Storage**: Google Drive integration for receipt images
-- **Real-time Updates**: Automatic dashboard refresh
-- **Error Handling**: User-friendly error messages
+- **Supabase PostgreSQL**: Modern database with Row Level Security
+- **Real-time Subscriptions**: Live data updates across clients
+- **Progressive Web App**: Offline functionality and mobile optimization  
+- **GitHub Pages**: Automated deployment with CI/CD pipeline
+- **Error Handling**: Comprehensive error management and user feedback
 
 ## 🎨 UI Component Examples
 
