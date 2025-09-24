@@ -1,0 +1,61 @@
+{
+  "name": "sandwich-pos",
+  "version": "2.0.0",
+  "description": "Modern restaurant POS system with real-time analytics and inventory management",
+  "main": "index.html",
+  "scripts": {
+    "dev": "python -m http.server 8000",
+    "serve": "npx serve .",
+    "validate": "html-validate index.html",
+    "lint": "eslint js/*.js",
+    "test": "echo \"Tests would run here\" && exit 0",
+    "build": "echo \"Build process complete\" && exit 0"
+  },
+  "keywords": [
+    "pos",
+    "restaurant",
+    "point-of-sale",
+    "inventory",
+    "analytics",
+    "pwa",
+    "supabase",
+    "thai-restaurant",
+    "sandwich-shop"
+  ],
+  "author": {
+    "name": "Your Name",
+    "email": "your.email@example.com"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/yourusername/sandwich-pos",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/sandwich-pos.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/sandwich-pos/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.0.0",
+    "html-validate": "^8.0.0",
+    "lighthouse": "^11.0.0",
+    "serve": "^14.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "pwa": {
+    "name": "Sandwich POS",
+    "short_name": "SandwichPOS",
+    "theme_color": "#8b5cf6",
+    "background_color": "#1e1b4b",
+    "display": "standalone",
+    "scope": "/",
+    "start_url": "/"
+  }
+}

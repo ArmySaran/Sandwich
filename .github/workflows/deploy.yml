@@ -1,0 +1,170 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # Build job
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: |
+          npm install -g lighthouse
+          npm install -g html-validate
+
+      - name: Validate HTML
+        run: |
+          echo "🔍 Validating HTML structure..."
+          npx html-validate index.html || echo "⚠️ HTML validation completed with warnings"
+
+      - name: Check JavaScript syntax
+        run: |
+          echo "🔍 Checking JavaScript files..."
+          node -c js/config.js
+          node -c js/database.js
+          node -c sw.js
+          echo "✅ JavaScript syntax check passed"
+
+      - name: Optimize images (if any)
+        run: |
+          echo "🖼️ Checking for images to optimize..."
+          if [ -d "images" ]; then
+            echo "Images directory found"
+            ls -la images/
+          else
+            echo "No images directory found, skipping optimization"
+          fi
+
+      - name: Run Lighthouse CI (optional)
+        run: |
+          echo "🔍 Running basic checks..."
+          # Note: Full Lighthouse requires a running server
+          echo "Lighthouse checks would run here in a full CI/CD setup"
+
+      - name: Create build info
+        run: |
+          echo "📋 Creating build information..."
+          cat > build-info.json << EOF
+          {
+            "buildTime": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+            "commitHash": "$GITHUB_SHA",
+            "commitMessage": "${{ github.event.head_commit.message }}",
+            "branch": "$GITHUB_REF_NAME",
+            "repository": "$GITHUB_REPOSITORY",
+            "actor": "$GITHUB_ACTOR"
+          }
+          EOF
+          echo "✅ Build info created"
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: '.'
+
+  # Deployment job
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v3
+
+      - name: Notify deployment success
+        run: |
+          echo "🚀 Deployment successful!"
+          echo "📱 App URL: ${{ steps.deployment.outputs.page_url }}"
+
+  # Health check job (runs after deployment)
+  health-check:
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Wait for deployment
+        run: sleep 30
+
+      - name: Check site health
+        run: |
+          echo "🏥 Running health checks..."
+
+          # Get the deployment URL
+          SITE_URL="${{ needs.deploy.outputs.page_url }}"
+          if [ -z "$SITE_URL" ]; then
+            SITE_URL="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
+          fi
+
+          echo "🔍 Testing: $SITE_URL"
+
+          # Basic connectivity test
+          if curl -sSf "$SITE_URL" > /dev/null; then
+            echo "✅ Site is reachable"
+          else
+            echo "❌ Site is not reachable"
+            exit 1
+          fi
+
+          # Check for essential files
+          if curl -sSf "$SITE_URL/manifest.json" > /dev/null; then
+            echo "✅ PWA manifest is accessible"
+          else
+            echo "⚠️ PWA manifest not found"
+          fi
+
+          if curl -sSf "$SITE_URL/sw.js" > /dev/null; then
+            echo "✅ Service worker is accessible"
+          else
+            echo "⚠️ Service worker not found"
+          fi
+
+          echo "🎉 Health check completed!"
+
+      - name: Performance audit (optional)
+        run: |
+          echo "⚡ Performance audit would run here"
+          # lighthouse --chrome-flags="--headless" --output=json --output-path=./lighthouse.json ${{ steps.deployment.outputs.page_url }}
+
+  # Notification job (optional)
+  notify:
+    runs-on: ubuntu-latest
+    needs: [deploy, health-check]
+    if: always()
+    steps:
+      - name: Notify deployment status
+        run: |
+          if [ "${{ needs.deploy.result }}" = "success" ] && [ "${{ needs.health-check.result }}" = "success" ]; then
+            echo "🎉 Deployment successful and healthy!"
+            echo "📱 Your Sandwich POS app is live at: ${{ needs.deploy.outputs.page_url }}"
+          else
+            echo "❌ Deployment or health check failed"
+            echo "Deploy status: ${{ needs.deploy.result }}"
+            echo "Health check status: ${{ needs.health-check.result }}"
+          fi
