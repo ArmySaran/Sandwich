@@ -3753,6 +3753,298 @@
             cursor: not-allowed;
         }
 
+        /* Enhanced POS Styles */
+        .menu-categories {
+            display: flex;
+            gap: var(--space-2);
+            margin-bottom: var(--space-4);
+            overflow-x: auto;
+            padding-bottom: var(--space-2);
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .category-btn {
+            background: var(--surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-full);
+            padding: var(--space-2) var(--space-4);
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            white-space: nowrap;
+            min-height: var(--touch-target-min);
+        }
+
+        .category-btn.active {
+            background: var(--primary-500);
+            color: var(--text-inverse);
+            border-color: var(--primary-500);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .category-btn:hover:not(.active) {
+            background: var(--gray-100);
+            border-color: var(--border-default);
+        }
+
+        .pos-main {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--space-6);
+        }
+
+        .menu-controls {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            position: relative;
+            min-width: 200px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: var(--space-2) var(--space-10) var(--space-2) var(--space-3);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-lg);
+            font-size: var(--text-sm);
+            background: var(--surface);
+        }
+
+        .search-box .search-icon {
+            position: absolute;
+            right: var(--space-3);
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-tertiary);
+            pointer-events: none;
+        }
+
+        .cart-count {
+            background: var(--primary-500);
+            color: var(--text-inverse);
+            font-size: var(--text-xs);
+            padding: var(--space-1) var(--space-2);
+            border-radius: var(--radius-full);
+            margin-left: var(--space-2);
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .clear-cart-btn {
+            background: var(--error-500);
+            color: var(--text-inverse);
+            border: none;
+            border-radius: var(--radius-md);
+            padding: var(--space-1) var(--space-2);
+            font-size: var(--text-xs);
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+
+        .clear-cart-btn:hover {
+            background: var(--error-600);
+            transform: translateY(-1px);
+        }
+
+        .empty-cart-message {
+            text-align: center;
+            padding: var(--space-8) var(--space-4);
+            color: var(--text-tertiary);
+        }
+
+        .empty-cart-icon {
+            font-size: 3rem;
+            margin-bottom: var(--space-4);
+            opacity: 0.5;
+        }
+
+        .discount-section {
+            margin-bottom: var(--space-4);
+            padding: var(--space-3);
+            background: var(--gray-50);
+            border-radius: var(--radius-lg);
+        }
+
+        .discount-input {
+            display: flex;
+            gap: var(--space-2);
+        }
+
+        .discount-input input {
+            flex: 1;
+            padding: var(--space-2);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-md);
+            font-size: var(--text-sm);
+        }
+
+        .discount-input select {
+            padding: var(--space-2);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-md);
+            font-size: var(--text-sm);
+            background: var(--surface);
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-2) 0;
+            font-size: var(--text-sm);
+        }
+
+        .total-row.subtotal {
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .total-row.discount {
+            color: var(--success-600);
+        }
+
+        .total-row.total {
+            border-top: 2px solid var(--border-default);
+            padding-top: var(--space-3);
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+        }
+
+        .total-row.profit-row {
+            background: linear-gradient(135deg, var(--success-50), var(--success-100));
+            margin: var(--space-2) -var(--space-3);
+            padding: var(--space-3);
+            border-radius: var(--radius-lg);
+            font-weight: var(--font-semibold);
+            color: var(--success-700);
+        }
+
+        .payment-methods {
+            margin-bottom: var(--space-4);
+        }
+
+        .payment-methods label {
+            display: block;
+            margin-bottom: var(--space-2);
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            color: var(--text-secondary);
+        }
+
+        .payment-options {
+            display: flex;
+            gap: var(--space-2);
+        }
+
+        .payment-btn {
+            flex: 1;
+            padding: var(--space-2);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-lg);
+            background: var(--surface);
+            font-size: var(--text-xs);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-1);
+        }
+
+        .payment-btn.active {
+            background: var(--primary-500);
+            color: var(--text-inverse);
+            border-color: var(--primary-500);
+        }
+
+        .payment-btn:hover:not(.active) {
+            background: var(--gray-100);
+            border-color: var(--border-strong);
+        }
+
+        .checkout-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2);
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+            border: none;
+            border-radius: var(--radius-xl);
+            padding: var(--space-4);
+            color: var(--text-inverse);
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            width: 100%;
+            min-height: var(--touch-target-large);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .checkout-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .checkout-btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .checkout-btn:disabled {
+            background: var(--gray-300);
+            color: var(--text-tertiary);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-profit {
+            background: rgba(255, 255, 255, 0.2);
+            padding: var(--space-1) var(--space-2);
+            border-radius: var(--radius-md);
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+        }
+
+        /* Responsive POS Layout */
+        @media (min-width: 768px) {
+            .pos-main {
+                grid-template-columns: 2fr 1fr;
+            }
+
+            .menu-categories {
+                justify-content: center;
+            }
+
+            .menu-controls {
+                justify-content: space-between;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .pos-container {
+                grid-template-columns: 1fr;
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+
+            .menu-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                max-height: 60vh;
+            }
+
+            .cart-section {
+                max-height: 70vh;
+            }
+        }
+
         /* Form Styles */
         .form-container {
             background: var(--surface-elevated);
@@ -5535,6 +5827,7 @@
             </div>
 
             <!-- POS Screen -->
+            <!-- POS Screen -->
             <div id="pos-screen" class="screen">
                 <div class="pos-container">
                     <!-- Quick Cost Info Panel -->
@@ -5549,41 +5842,106 @@
                         </button>
                     </div>
 
-                    <div class="menu-section">
-                        <div class="menu-header">
-                            <h3 class="section-title" style="color: #333; text-shadow: none;">เมนูสินค้า</h3>
-                            <button class="cost-analysis-btn" onclick="showCostAnalysis()">📊 ดูต้นทุน</button>
-                        </div>
-                        <div class="menu-grid" id="menu-grid">
-                            <!-- Menu items will be loaded here -->
-                        </div>
+                    <!-- Menu Categories -->
+                    <div class="menu-categories">
+                        <button class="category-btn active" onclick="loadCategoryMenu('all')" data-category="all">
+                            🍽️ ทั้งหมด
+                        </button>
+                        <button class="category-btn" onclick="loadCategoryMenu('sandwich')" data-category="sandwich">
+                            🥪 แซนด์วิช
+                        </button>
+                        <button class="category-btn" onclick="loadCategoryMenu('drink')" data-category="drink">
+                            🥤 เครื่องดื่ม
+                        </button>
+                        <button class="category-btn" onclick="loadCategoryMenu('dessert')" data-category="dessert">
+                            🍰 ของหวาน
+                        </button>
+                        <button class="category-btn" onclick="loadCategoryMenu('side')" data-category="side">
+                            🍟 เครื่องเคียง
+                        </button>
                     </div>
 
-                    <div class="cart-section">
-                        <h3 class="cart-header">
-                            ตะกร้าสินค้า
-                            <span class="profit-indicator" id="profit-indicator">💚</span>
-                        </h3>
-                        <div class="cart-items" id="cart-items">
-                            <!-- Cart items will be displayed here -->
-                        </div>
-                        <div class="cart-totals">
-                            <div class="total-row">
-                                <span>ต้นทุนรวม:</span>
-                                <span id="total-cost">0 บาท</span>
+                    <div class="pos-main">
+                        <div class="menu-section">
+                            <div class="menu-header">
+                                <h3 class="section-title">เมนูสินค้า</h3>
+                                <div class="menu-controls">
+                                    <button class="cost-analysis-btn" onclick="showCostAnalysis()">📊 ดูต้นทุน</button>
+                                    <div class="search-box">
+                                        <input type="text" id="menu-search" placeholder="ค้นหาเมนู..." onkeyup="searchMenu(this.value)">
+                                        <span class="search-icon">🔍</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="total-row">
-                                <span>ยอดขาย:</span>
-                                <span id="cart-total">0 บาท</span>
-                            </div>
-                            <div class="total-row profit-row">
-                                <span>กำไรสุทธิ:</span>
-                                <span id="total-profit">0 บาท</span>
+                            <div class="menu-grid" id="menu-grid">
+                                <!-- Menu items will be loaded here -->
                             </div>
                         </div>
-                        <button class="checkout-btn" id="checkout-btn" onclick="checkout()">
-                            ชำระเงิน <span id="checkout-profit"></span>
-                        </button>
+
+                        <div class="cart-section">
+                            <div class="cart-header">
+                                <h3>
+                                    ตะกร้าสินค้า
+                                    <span class="cart-count" id="cart-count">0</span>
+                                    <span class="profit-indicator" id="profit-indicator">💚</span>
+                                </h3>
+                                <button class="clear-cart-btn" onclick="clearCart()" id="clear-cart-btn" style="display: none;">
+                                    🗑️ ล้างตะกร้า
+                                </button>
+                            </div>
+                            <div class="cart-items" id="cart-items">
+                                <div class="empty-cart-message">
+                                    <div class="empty-cart-icon">🛒</div>
+                                    <p>ตะกร้าว่าง</p>
+                                    <small>เลือกเมนูเพื่อเริ่มสั่งซื้อ</small>
+                                </div>
+                            </div>
+                            <div class="cart-totals" id="cart-totals-section" style="display: none;">
+                                <div class="discount-section">
+                                    <div class="discount-input">
+                                        <input type="number" id="discount-amount" placeholder="0" min="0" onchange="applyDiscount()">
+                                        <select id="discount-type" onchange="applyDiscount()">
+                                            <option value="percent">% ลด</option>
+                                            <option value="fixed">บาท ลด</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="total-row subtotal">
+                                    <span>ราคารวม:</span>
+                                    <span id="cart-subtotal">0 บาท</span>
+                                </div>
+                                <div class="total-row discount" id="discount-row" style="display: none;">
+                                    <span>ส่วนลด:</span>
+                                    <span id="discount-display">0 บาท</span>
+                                </div>
+                                <div class="total-row">
+                                    <span>ต้นทุนรวม:</span>
+                                    <span id="total-cost">0 บาท</span>
+                                </div>
+                                <div class="total-row total">
+                                    <span>ยอดสุทธิ:</span>
+                                    <span id="cart-total">0 บาท</span>
+                                </div>
+                                <div class="total-row profit-row">
+                                    <span>กำไรสุทธิ:</span>
+                                    <span id="total-profit">0 บาท</span>
+                                </div>
+                            </div>
+                            <div class="checkout-section">
+                                <div class="payment-methods" id="payment-methods" style="display: none;">
+                                    <label>วิธีชำระเงิน:</label>
+                                    <div class="payment-options">
+                                        <button class="payment-btn active" data-method="cash">💵 เงินสด</button>
+                                        <button class="payment-btn" data-method="transfer">🏦 โอน</button>
+                                        <button class="payment-btn" data-method="qr">📱 QR Code</button>
+                                    </div>
+                                </div>
+                                <button class="checkout-btn" id="checkout-btn" onclick="checkout()" disabled>
+                                    <span class="btn-text">ชำระเงิน</span>
+                                    <span id="checkout-profit" class="btn-profit"></span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -5670,35 +6028,115 @@
 
             <!-- Sales Screen -->
             <div id="sales-screen" class="screen">
-                <div class="list-container">
-                    <div class="list-header">
-                        <h3 class="list-title">รายงานการขาย</h3>
-                        <button class="btn btn-small" onclick="refreshSalesReport()">รีเฟรช</button>
-                    </div>
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <h3 id="sales-today" data-stat="sales">0</h3>
-                            <p>ยอดขายวันนี้</p>
-                        </div>
-                        <div class="stat-card">
-                            <h3 id="sales-week" data-stat="sales">0</h3>
-                            <p>ยอดขายสัปดาห์</p>
-                        </div>
-                        <div class="stat-card">
-                            <h3 id="sales-month" data-stat="sales">0</h3>
-                            <p>ยอดขายเดือน</p>
-                        </div>
-                        <div class="stat-card">
-                            <h3 id="avg-daily" data-stat="avg-order">0</h3>
-                            <p>เฉลี่ยต่อวัน</p>
+                <div class="sales-container">
+                    <div class="screen-header">
+                        <h2 class="screen-title">📊 รายงานการขาย</h2>
+                        <div class="screen-actions">
+                            <button class="btn btn-secondary" onclick="exportSalesData()">📥 ส่งออก</button>
+                            <button class="btn btn-primary" onclick="refreshSalesReport()">🔄 รีเฟรช</button>
                         </div>
                     </div>
-                    <div id="sales-details-list" class="list-container">
-                        <div class="list-header">
-                            <h4>รายการขายล่าสุด</h4>
+
+                    <!-- Date Range Filter -->
+                    <div class="date-filter-section">
+                        <div class="filter-group">
+                            <label>ช่วงวันที่:</label>
+                            <div class="date-range-picker">
+                                <input type="date" id="sales-start-date" onchange="updateSalesDateRange()">
+                                <span class="date-separator">ถึง</span>
+                                <input type="date" id="sales-end-date" onchange="updateSalesDateRange()">
+                            </div>
                         </div>
-                        <div id="recent-sales">
+                        <div class="quick-date-filters">
+                            <button class="quick-date-btn active" onclick="setSalesDateRange('today')">วันนี้</button>
+                            <button class="quick-date-btn" onclick="setSalesDateRange('week')">สัปดาห์นี้</button>
+                            <button class="quick-date-btn" onclick="setSalesDateRange('month')">เดือนนี้</button>
+                            <button class="quick-date-btn" onclick="setSalesDateRange('quarter')">ไตรมาสนี้</button>
+                        </div>
+                    </div>
+
+                    <!-- Sales Statistics Grid -->
+                    <div class="sales-stats-grid">
+                        <div class="stat-card primary">
+                            <div class="stat-icon">💰</div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="total-sales">฿0</div>
+                                <div class="stat-label">ยอดขายรวม</div>
+                                <div class="stat-change positive" id="sales-change">+0%</div>
+                            </div>
+                        </div>
+                        <div class="stat-card success">
+                            <div class="stat-icon">📦</div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="total-orders">0</div>
+                                <div class="stat-label">จำนวนออเดอร์</div>
+                                <div class="stat-change positive" id="orders-change">+0%</div>
+                            </div>
+                        </div>
+                        <div class="stat-card warning">
+                            <div class="stat-icon">📈</div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="avg-order-value">฿0</div>
+                                <div class="stat-label">เฉลี่ยต่อออเดอร์</div>
+                                <div class="stat-change positive" id="aov-change">+0%</div>
+                            </div>
+                        </div>
+                        <div class="stat-card info">
+                            <div class="stat-icon">🎯</div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="profit-margin">0%</div>
+                                <div class="stat-label">อัตรากำไร</div>
+                                <div class="stat-change positive" id="margin-change">+0%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sales Chart Section -->
+                    <div class="chart-section">
+                        <div class="chart-header">
+                            <h3>กราฟยอดขาย</h3>
+                            <div class="chart-controls">
+                                <select id="chart-period" onchange="updateSalesChart()">
+                                    <option value="daily">รายวัน</option>
+                                    <option value="weekly">รายสัปดาห์</option>
+                                    <option value="monthly">รายเดือน</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="sales-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Top Products Section -->
+                    <div class="top-products-section">
+                        <div class="section-header">
+                            <h3>🏆 เมนูขายดี</h3>
+                            <span class="section-subtitle">ตามช่วงเวลาที่เลือก</span>
+                        </div>
+                        <div class="top-products-grid" id="top-products-list">
+                            <!-- Top products will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Recent Sales Section -->
+                    <div class="recent-sales-section">
+                        <div class="section-header">
+                            <h3>🕒 รายการขายล่าสุด</h3>
+                            <button class="btn btn-outline" onclick="viewAllTransactions()">ดูทั้งหมด</button>
+                        </div>
+                        <div class="recent-sales-list" id="recent-sales-list">
                             <!-- Recent sales will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Performance Insights -->
+                    <div class="insights-section">
+                        <div class="section-header">
+                            <h3>💡 ข้อมูลเชิงลึก</h3>
+                        </div>
+                        <div class="insights-grid" id="sales-insights">
+                            <!-- Insights will be loaded here -->
                         </div>
                     </div>
                 </div>
@@ -5706,35 +6144,162 @@
 
             <!-- Expenses Screen -->
             <div id="expenses-screen" class="screen">
-                <div class="list-container">
-                    <div class="list-header">
-                        <h3 class="list-title">รายจ่าย & ค่าใช้จ่าย</h3>
-                        <button class="btn btn-small" onclick="showQuickExpenseModal()">เพิ่มรายจ่าย</button>
-                    </div>
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <h3 id="expenses-today" data-stat="expenses">0</h3>
-                            <p>รายจ่ายวันนี้</p>
-                        </div>
-                        <div class="stat-card">
-                            <h3 id="expenses-week" data-stat="expenses">0</h3>
-                            <p>รายจ่ายสัปดาห์</p>
-                        </div>
-                        <div class="stat-card">
-                            <h3 id="expenses-month" data-stat="expenses">0</h3>
-                            <p>รายจ่ายเดือน</p>
-                        </div>
-                        <div class="stat-card">
-                            <h3 id="net-profit" data-stat="profit">0</h3>
-                            <p>กำไรสุทธิ</p>
+                <div class="expenses-container">
+                    <div class="screen-header">
+                        <h2 class="screen-title">💸 รายจ่าย & ค่าใช้จ่าย</h2>
+                        <div class="screen-actions">
+                            <button class="btn btn-secondary" onclick="exportExpensesData()">📥 ส่งออก</button>
+                            <button class="btn btn-success" onclick="showQuickExpenseModal()">➕ เพิ่มรายจ่าย</button>
                         </div>
                     </div>
-                    <div id="expense-details-list" class="list-container">
-                        <div class="list-header">
-                            <h4>รายจ่ายล่าสุด</h4>
+
+                    <!-- Expense Categories Filter -->
+                    <div class="expense-filter-section">
+                        <div class="filter-group">
+                            <label>ประเภทรายจ่าย:</label>
+                            <div class="category-filters">
+                                <button class="category-filter-btn active" onclick="filterExpensesByCategory('all')">ทั้งหมด</button>
+                                <button class="category-filter-btn" onclick="filterExpensesByCategory('ingredient')">🥬 วัตถุดิบ</button>
+                                <button class="category-filter-btn" onclick="filterExpensesByCategory('equipment')">🔧 อุปกรณ์</button>
+                                <button class="category-filter-btn" onclick="filterExpensesByCategory('utility')">⚡ ค่าสาธารณูปโภค</button>
+                                <button class="category-filter-btn" onclick="filterExpensesByCategory('rent')">🏠 ค่าเช่า</button>
+                                <button class="category-filter-btn" onclick="filterExpensesByCategory('marketing')">📢 การตลาด</button>
+                                <button class="category-filter-btn" onclick="filterExpensesByCategory('other')">📦 อื่นๆ</button>
+                            </div>
                         </div>
-                        <div id="recent-expenses">
+                    </div>
+
+                    <!-- Expense Statistics -->
+                    <div class="expenses-stats-grid">
+                        <div class="stat-card danger">
+                            <div class="stat-icon">💳</div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="total-expenses">฿0</div>
+                                <div class="stat-label">รายจ่ายรวม</div>
+                                <div class="stat-period">เดือนนี้</div>
+                            </div>
+                        </div>
+                        <div class="stat-card warning">
+                            <div class="stat-icon">📊</div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="avg-daily-expense">฿0</div>
+                                <div class="stat-label">เฉลี่ยต่อวัน</div>
+                                <div class="stat-period">30 วันล่าสุด</div>
+                            </div>
+                        </div>
+                        <div class="stat-card info">
+                            <div class="stat-icon">🏆</div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="top-expense-category">-</div>
+                                <div class="stat-label">ประเภทสูงสุด</div>
+                                <div class="stat-period" id="top-category-amount">฿0</div>
+                            </div>
+                        </div>
+                        <div class="stat-card success">
+                            <div class="stat-icon">💰</div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="net-profit-after-expense">฿0</div>
+                                <div class="stat-label">กำไรสุทธิ</div>
+                                <div class="stat-period">หลังหักรายจ่าย</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Expense Chart -->
+                    <div class="chart-section">
+                        <div class="chart-header">
+                            <h3>กราฟรายจ่าย</h3>
+                            <div class="chart-controls">
+                                <select id="expense-chart-type" onchange="updateExpenseChart()">
+                                    <option value="category">ตามประเภท</option>
+                                    <option value="timeline">ตามเวลา</option>
+                                    <option value="comparison">เปรียบเทียบ</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="expenses-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Quick Add Expenses -->
+                    <div class="quick-add-section">
+                        <div class="section-header">
+                            <h3>⚡ เพิ่มรายจ่ายด่วน</h3>
+                        </div>
+                        <div class="quick-add-grid">
+                            <button class="quick-add-btn" onclick="addQuickExpense('วัตถุดิบ', 500)">
+                                <div class="quick-add-icon">🥬</div>
+                                <div class="quick-add-label">วัตถุดิบ</div>
+                                <div class="quick-add-amount">500฿</div>
+                            </button>
+                            <button class="quick-add-btn" onclick="addQuickExpense('ค่าไฟ', 800)">
+                                <div class="quick-add-icon">⚡</div>
+                                <div class="quick-add-label">ค่าไฟ</div>
+                                <div class="quick-add-amount">800฿</div>
+                            </button>
+                            <button class="quick-add-btn" onclick="addQuickExpense('ค่าน้ำ', 200)">
+                                <div class="quick-add-icon">💧</div>
+                                <div class="quick-add-label">ค่าน้ำ</div>
+                                <div class="quick-add-amount">200฿</div>
+                            </button>
+                            <button class="quick-add-btn" onclick="showQuickExpenseModal()">
+                                <div class="quick-add-icon">➕</div>
+                                <div class="quick-add-label">อื่นๆ</div>
+                                <div class="quick-add-amount">กำหนดเอง</div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Recent Expenses -->
+                    <div class="recent-expenses-section">
+                        <div class="section-header">
+                            <h3>🕒 รายจ่ายล่าสุด</h3>
+                            <button class="btn btn-outline" onclick="viewAllExpenses()">ดูทั้งหมด</button>
+                        </div>
+                        <div class="expense-list" id="recent-expenses-list">
                             <!-- Recent expenses will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Expense Analysis -->
+                    <div class="expense-analysis-section">
+                        <div class="section-header">
+                            <h3>📈 การวิเคราะห์รายจ่าย</h3>
+                        </div>
+                        <div class="analysis-grid">
+                            <div class="analysis-card">
+                                <div class="analysis-header">
+                                    <h4>🎯 เป้าหมายรายจ่าย</h4>
+                                    <span class="analysis-period">เดือนนี้</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="expense-progress" style="width: 0%"></div>
+                                </div>
+                                <div class="progress-labels">
+                                    <span id="current-expense-amount">฿0</span>
+                                    <span id="expense-budget-amount">/ ฿15,000</span>
+                                </div>
+                            </div>
+                            <div class="analysis-card">
+                                <div class="analysis-header">
+                                    <h4>📊 เปรียบเทียบเดือนก่อน</h4>
+                                </div>
+                                <div class="comparison-stats">
+                                    <div class="comparison-item">
+                                        <span class="comparison-label">รายจ่ายรวม</span>
+                                        <span class="comparison-value" id="expense-comparison">+0%</span>
+                                    </div>
+                                    <div class="comparison-item">
+                                        <span class="comparison-label">วัตถุดิบ</span>
+                                        <span class="comparison-value" id="ingredient-comparison">+0%</span>
+                                    </div>
+                                    <div class="comparison-item">
+                                        <span class="comparison-label">ค่าสาธารณูปโภค</span>
+                                        <span class="comparison-value" id="utility-comparison">+0%</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -5742,44 +6307,379 @@
 
             <!-- Inventory Screen -->
             <div id="inventory-screen" class="screen">
-                <div class="list-container">
-                    <div class="list-header">
-                        <h3 class="list-title">การจัดการสต๊อก</h3>
-                        <button class="btn btn-small" onclick="refreshInventory()">รีเฟรช</button>
+                <div class="inventory-container">
+                    <div class="screen-header">
+                        <h2 class="screen-title">📦 การจัดการสต็อก</h2>
+                        <div class="screen-actions">
+                            <button class="btn btn-secondary" onclick="exportInventoryData()">📥 ส่งออก</button>
+                            <button class="btn btn-warning" onclick="generateReorderReport()">🔄 รายงานสั่งซื้อ</button>
+                            <button class="btn btn-primary" onclick="refreshInventory()">🔄 รีเฟรช</button>
+                        </div>
                     </div>
-                    <div id="inventory-alerts-list">
-                        <!-- Inventory alerts will be loaded here -->
+
+                    <!-- Inventory Status Overview -->
+                    <div class="inventory-status-grid">
+                        <div class="status-card critical">
+                            <div class="status-icon">🚨</div>
+                            <div class="status-content">
+                                <div class="status-value" id="critical-stock-count">0</div>
+                                <div class="status-label">สต็อกวิกฤต</div>
+                                <div class="status-desc">ต่ำกว่า 20%</div>
+                            </div>
+                        </div>
+                        <div class="status-card warning">
+                            <div class="status-icon">⚠️</div>
+                            <div class="status-content">
+                                <div class="status-value" id="low-stock-count">0</div>
+                                <div class="status-label">สต็อกต่ำ</div>
+                                <div class="status-desc">ต่ำกว่า 50%</div>
+                            </div>
+                        </div>
+                        <div class="status-card success">
+                            <div class="status-icon">✅</div>
+                            <div class="status-content">
+                                <div class="status-value" id="good-stock-count">0</div>
+                                <div class="status-label">สต็อกเพียงพอ</div>
+                                <div class="status-desc">มากกว่า 50%</div>
+                            </div>
+                        </div>
+                        <div class="status-card info">
+                            <div class="status-icon">📊</div>
+                            <div class="status-content">
+                                <div class="status-value" id="total-items-count">0</div>
+                                <div class="status-label">รายการทั้งหมด</div>
+                                <div class="status-desc">ในคลัง</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Inventory Filters -->
+                    <div class="inventory-filters">
+                        <div class="filter-group">
+                            <label>หมวดหมู่:</label>
+                            <select id="inventory-category-filter" onchange="filterInventory()">
+                                <option value="all">ทั้งหมด</option>
+                                <option value="bread">ขนมปัง</option>
+                                <option value="dairy">นม & เนย</option>
+                                <option value="meat">เนื้อสัตว์</option>
+                                <option value="vegetable">ผัก</option>
+                                <option value="condiment">เครื่องปรุง</option>
+                                <option value="beverage">เครื่องดื่ม</option>
+                                <option value="packaging">บรรจุภัณฑ์</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>สถานะสต็อก:</label>
+                            <select id="inventory-status-filter" onchange="filterInventory()">
+                                <option value="all">ทั้งหมด</option>
+                                <option value="critical">วิกฤต</option>
+                                <option value="low">ต่ำ</option>
+                                <option value="sufficient">เพียงพอ</option>
+                                <option value="excess">เกิน</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>ผู้จำหน่าย:</label>
+                            <select id="inventory-supplier-filter" onchange="filterInventory()">
+                                <option value="all">ทั้งหมด</option>
+                                <!-- Supplier options will be loaded dynamically -->
+                            </select>
+                        </div>
+                        <div class="search-group">
+                            <input type="text" id="inventory-search" placeholder="ค้นหารายการ..." onkeyup="searchInventory(this.value)">
+                            <span class="search-icon">🔍</span>
+                        </div>
+                    </div>
+
+                    <!-- Inventory Table -->
+                    <div class="inventory-table-section">
+                        <div class="table-header">
+                            <h3>📋 รายการสินค้าคงคลัง</h3>
+                            <div class="table-actions">
+                                <button class="btn btn-outline" onclick="addNewItem()">➕ เพิ่มสินค้า</button>
+                                <button class="btn btn-outline" onclick="bulkUpdate()">📝 แก้ไขเป็นกลุ่ม</button>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table class="inventory-table" id="inventory-table">
+                                <thead>
+                                    <tr>
+                                        <th><input type="checkbox" id="select-all-items" onchange="selectAllItems()"></th>
+                                        <th>รายการ</th>
+                                        <th>หมวดหมู่</th>
+                                        <th>ปัจจุบัน</th>
+                                        <th>ขั้นต่ำ</th>
+                                        <th>สถานะ</th>
+                                        <th>ต้นทุน/หน่วย</th>
+                                        <th>ผู้จำหน่าย</th>
+                                        <th>สั่งซื้อล่าสุด</th>
+                                        <th>จัดการ</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="inventory-table-body">
+                                    <!-- Inventory items will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="quick-actions-section">
+                        <div class="section-header">
+                            <h3>⚡ การจัดการด่วน</h3>
+                        </div>
+                        <div class="quick-actions-grid">
+                            <button class="quick-action-btn reorder" onclick="quickReorder()">
+                                <div class="action-icon">📞</div>
+                                <div class="action-label">สั่งซื้อด่วน</div>
+                                <div class="action-desc">สำหรับสินค้าที่ขาด</div>
+                            </button>
+                            <button class="quick-action-btn adjust" onclick="quickStockAdjust()">
+                                <div class="action-icon">📊</div>
+                                <div class="action-label">ปรับสต็อก</div>
+                                <div class="action-desc">อัพเดทจำนวนคงเหลือ</div>
+                            </button>
+                            <button class="quick-action-btn alert" onclick="setStockAlerts()">
+                                <div class="action-icon">🔔</div>
+                                <div class="action-label">ตั้งการแจ้งเตือน</div>
+                                <div class="action-desc">กำหนดจุดแจ้งเตือน</div>
+                            </button>
+                            <button class="quick-action-btn report" onclick="generateStockReport()">
+                                <div class="action-icon">📄</div>
+                                <div class="action-label">รายงานสต็อก</div>
+                                <div class="action-desc">ส่งออกข้อมูลทั้งหมด</div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Stock Movement History -->
+                    <div class="stock-movement-section">
+                        <div class="section-header">
+                            <h3>📈 ประวัติการเคลื่อนไหว</h3>
+                            <div class="movement-filters">
+                                <select id="movement-type-filter" onchange="filterStockMovement()">
+                                    <option value="all">ทั้งหมด</option>
+                                    <option value="in">เพิ่มสต็อก</option>
+                                    <option value="out">ลดสต็อก</option>
+                                    <option value="adjust">ปรับปรุง</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="movement-list" id="stock-movement-list">
+                            <!-- Stock movement history will be loaded here -->
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Reports Screen -->
             <div id="reports-screen" class="screen">
-                <div class="list-container">
-                    <div class="list-header">
-                        <h3 class="list-title">รายงานธุรกิจ</h3>
-                        <button class="btn btn-small" onclick="generateAllReports()">สร้างรายงาน</button>
+                <div class="reports-container">
+                    <div class="screen-header">
+                        <h2 class="screen-title">📊 รายงานธุรกิจ</h2>
+                        <div class="screen-actions">
+                            <button class="btn btn-secondary" onclick="scheduleReports()">📅 กำหนดเวลา</button>
+                            <button class="btn btn-primary" onclick="generateAllReports()">📄 สร้างรายงานทั้งหมด</button>
+                        </div>
                     </div>
-                    <div class="actions-grid" style="grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
-                        <button class="action-btn" onclick="showCostAnalysis()">
-                            <div class="action-icon">📊</div>
-                            <div class="action-label">วิเคราะห์ต้นทุน</div>
-                        </button>
-                        <button class="action-btn" onclick="generateReorderReport()">
-                            <div class="action-icon">📦</div>
-                            <div class="action-label">รายงานสั่งซื้อ</div>
-                        </button>
-                        <button class="action-btn" onclick="showPriceRecommendations()">
-                            <div class="action-icon">💡</div>
-                            <div class="action-label">แนะนำราคา</div>
-                        </button>
-                        <button class="action-btn" onclick="calculateDailyProfit()">
-                            <div class="action-icon">🧮</div>
-                            <div class="action-label">กำไรวันนี้</div>
-                        </button>
+
+                    <!-- Report Categories -->
+                    <div class="report-categories">
+                        <div class="category-tabs">
+                            <button class="category-tab active" onclick="switchReportCategory('overview')" data-category="overview">
+                                📈 ภาพรวม
+                            </button>
+                            <button class="category-tab" onclick="switchReportCategory('financial')" data-category="financial">
+                                💰 การเงิน
+                            </button>
+                            <button class="category-tab" onclick="switchReportCategory('inventory')" data-category="inventory">
+                                📦 คลังสินค้า
+                            </button>
+                            <button class="category-tab" onclick="switchReportCategory('performance')" data-category="performance">
+                                🎯 ประสิทธิภาพ
+                            </button>
+                        </div>
                     </div>
-                    <div id="reports-content">
-                        <div class="alert alert-info">เลือกรายงานที่ต้องการดูจากปุ่มด้านบน</div>
+
+                    <!-- Overview Reports -->
+                    <div class="report-content" id="overview-reports">
+                        <div class="report-section">
+                            <h3>📊 รายงานภาพรวมธุรกิจ</h3>
+                            <div class="report-cards-grid">
+                                <div class="report-card executive">
+                                    <div class="report-header">
+                                        <div class="report-icon">👔</div>
+                                        <div class="report-title">รายงานผู้บริหาร</div>
+                                    </div>
+                                    <div class="report-description">สรุปผลประกอบการโดยรวม</div>
+                                    <div class="report-actions">
+                                        <button class="btn btn-outline" onclick="previewReport('executive')">👁️ ดูตัวอย่าง</button>
+                                        <button class="btn btn-primary" onclick="generateReport('executive')">📄 สร้าง</button>
+                                    </div>
+                                </div>
+                                <div class="report-card dashboard">
+                                    <div class="report-header">
+                                        <div class="report-icon">📊</div>
+                                        <div class="report-title">แดชบอร์ดสด</div>
+                                    </div>
+                                    <div class="report-description">ข้อมูลแบบเรียลไทม์</div>
+                                    <div class="report-actions">
+                                        <button class="btn btn-outline" onclick="previewReport('dashboard')">👁️ ดูตัวอย่าง</button>
+                                        <button class="btn btn-primary" onclick="generateReport('dashboard')">📄 สร้าง</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Financial Reports -->
+                    <div class="report-content" id="financial-reports" style="display: none;">
+                        <div class="report-section">
+                            <h3>💰 รายงานทางการเงิน</h3>
+                            <div class="report-cards-grid">
+                                <div class="report-card profit-loss">
+                                    <div class="report-header">
+                                        <div class="report-icon">�</div>
+                                        <div class="report-title">กำไรขาดทุน</div>
+                                    </div>
+                                    <div class="report-description">รายได้ - รายจ่าย = กำไรสุทธิ</div>
+                                    <div class="report-preview">
+                                        <div class="preview-stat">
+                                            <span class="stat-label">กำไรเดือนนี้:</span>
+                                            <span class="stat-value profit" id="monthly-profit">+฿0</span>
+                                        </div>
+                                    </div>
+                                    <div class="report-actions">
+                                        <button class="btn btn-outline" onclick="previewReport('profit-loss')">👁️ ดูตัวอย่าง</button>
+                                        <button class="btn btn-primary" onclick="generateReport('profit-loss')">📄 สร้าง</button>
+                                    </div>
+                                </div>
+                                <div class="report-card cash-flow">
+                                    <div class="report-header">
+                                        <div class="report-icon">�</div>
+                                        <div class="report-title">กระแสเงินสด</div>
+                                    </div>
+                                    <div class="report-description">การเคลื่อนไหวของเงินสด</div>
+                                    <div class="report-preview">
+                                        <div class="preview-stat">
+                                            <span class="stat-label">เงินสดคงเหลือ:</span>
+                                            <span class="stat-value" id="cash-balance">฿0</span>
+                                        </div>
+                                    </div>
+                                    <div class="report-actions">
+                                        <button class="btn btn-outline" onclick="previewReport('cash-flow')">👁️ ดูตัวอย่าง</button>
+                                        <button class="btn btn-primary" onclick="generateReport('cash-flow')">📄 สร้าง</button>
+                                    </div>
+                                </div>
+                                <div class="report-card tax">
+                                    <div class="report-header">
+                                        <div class="report-icon">🧾</div>
+                                        <div class="report-title">ภาษี</div>
+                                    </div>
+                                    <div class="report-description">รายงานสำหรับภาษี</div>
+                                    <div class="report-preview">
+                                        <div class="preview-stat">
+                                            <span class="stat-label">VAT ค้างจ่าย:</span>
+                                            <span class="stat-value" id="vat-payable">฿0</span>
+                                        </div>
+                                    </div>
+                                    <div class="report-actions">
+                                        <button class="btn btn-outline" onclick="previewReport('tax')">👁️ ดูตัวอย่าง</button>
+                                        <button class="btn btn-primary" onclick="generateReport('tax')">📄 สร้าง</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Inventory Reports -->
+                    <div class="report-content" id="inventory-reports" style="display: none;">
+                        <div class="report-section">
+                            <h3>� รายงานคลังสินค้า</h3>
+                            <div class="report-cards-grid">
+                                <div class="report-card stock-level">
+                                    <div class="report-header">
+                                        <div class="report-icon">📊</div>
+                                        <div class="report-title">ระดับสต็อก</div>
+                                    </div>
+                                    <div class="report-description">สถานะสินค้าคงคลัง</div>
+                                    <div class="report-actions">
+                                        <button class="btn btn-outline" onclick="previewReport('stock-level')">👁️ ดูตัวอย่าง</button>
+                                        <button class="btn btn-primary" onclick="generateReport('stock-level')">📄 สร้าง</button>
+                                    </div>
+                                </div>
+                                <div class="report-card reorder">
+                                    <div class="report-header">
+                                        <div class="report-icon">🔄</div>
+                                        <div class="report-title">รายงานสั่งซื้อ</div>
+                                    </div>
+                                    <div class="report-description">สินค้าที่ต้องสั่งซื้อ</div>
+                                    <div class="report-actions">
+                                        <button class="btn btn-outline" onclick="previewReport('reorder')">👁️ ดูตัวอย่าง</button>
+                                        <button class="btn btn-primary" onclick="generateReport('reorder')">📄 สร้าง</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Performance Reports -->
+                    <div class="report-content" id="performance-reports" style="display: none;">
+                        <div class="report-section">
+                            <h3>🎯 รายงานประสิทธิภาพ</h3>
+                            <div class="report-cards-grid">
+                                <div class="report-card sales-performance">
+                                    <div class="report-header">
+                                        <div class="report-icon">🏆</div>
+                                        <div class="report-title">ประสิทธิภาพการขาย</div>
+                                    </div>
+                                    <div class="report-description">เมนูขายดี & แนวโน้ม</div>
+                                    <div class="report-actions">
+                                        <button class="btn btn-outline" onclick="previewReport('sales-performance')">👁️ ดูตัวอย่าง</button>
+                                        <button class="btn btn-primary" onclick="generateReport('sales-performance')">📄 สร้าง</button>
+                                    </div>
+                                </div>
+                                <div class="report-card cost-analysis">
+                                    <div class="report-header">
+                                        <div class="report-icon">💡</div>
+                                        <div class="report-title">วิเคราะห์ต้นทุน</div>
+                                    </div>
+                                    <div class="report-description">ต้นทุน & อัตรากำไร</div>
+                                    <div class="report-actions">
+                                        <button class="btn btn-outline" onclick="previewReport('cost-analysis')">👁️ ดูตัวอย่าง</button>
+                                        <button class="btn btn-primary" onclick="generateReport('cost-analysis')">📄 สร้าง</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Generated Reports History -->
+                    <div class="reports-history-section">
+                        <div class="section-header">
+                            <h3>📁 ประวัติรายงาน</h3>
+                            <button class="btn btn-outline" onclick="clearReportsHistory()">🗑️ ล้างประวัติ</button>
+                        </div>
+                        <div class="reports-history-list" id="reports-history-list">
+                            <!-- Reports history will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Report Preview Modal -->
+                    <div id="report-preview-modal" class="modal" style="display: none;">
+                        <div class="modal-content report-preview-content">
+                            <div class="modal-header">
+                                <h3 id="preview-report-title">ตัวอย่างรายงาน</h3>
+                                <button class="close-btn" onclick="closeReportPreview()">×</button>
+                            </div>
+                            <div class="report-preview-body" id="report-preview-body">
+                                <!-- Report preview content -->
+                            </div>
+                            <div class="modal-actions">
+                                <button class="btn btn-secondary" onclick="closeReportPreview()">ปิด</button>
+                                <button class="btn btn-primary" onclick="downloadCurrentReport()">📥 ดาวน์โหลด</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
