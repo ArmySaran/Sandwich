@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🥪 ร้าน Sandwich ตัวกลม - Complete Setup Guide
 
 ## 🎉 PROJECT COMPLETION STATUS
