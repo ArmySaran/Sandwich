@@ -160,7 +160,7 @@
             --touch-target-min: 44px;
             --touch-target-comfortable: 56px;
             --touch-target-large: 64px;
-            
+
             /* Mobile-First Spacing System */
             --space-mobile-xs: 4px;
             --space-mobile-sm: 8px;
@@ -1049,6 +1049,48 @@
             justify-content: center;
             font-size: 16px;
             transition: var(--transition-base);
+            /* Ensure emoji display */
+            font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', 'Segoe UI Symbol', 'Android Emoji', 'EmojiSymbols', emoji;
+        }
+
+        /* Fallback CSS icons if emojis fail */
+        .nav-icon {
+            position: relative;
+        }
+
+        /* Dashboard icon fallback */
+        .nav-item:nth-child(1) .nav-icon:empty::before {
+            content: "⌂";
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        /* POS icon fallback */
+        .nav-item:nth-child(2) .nav-icon:empty::before {
+            content: "○";
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        /* Inventory icon fallback */
+        .nav-item:nth-child(3) .nav-icon:empty::before {
+            content: "□";
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        /* Reports icon fallback */
+        .nav-item:nth-child(4) .nav-icon:empty::before {
+            content: "≡";
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        /* Settings icon fallback */
+        .nav-item:nth-child(5) .nav-icon:empty::before {
+            content: "⚙";
+            font-size: 18px;
+            line-height: 1;
         }
 
         .nav-item.active .nav-icon {
@@ -4327,13 +4369,140 @@
                 </div>
             </div>
         </div>
-    </div>
 
     <script>
+        // IMMEDIATE FUNCTION DEFINITIONS FOR CRITICAL OPERATIONS
+        // These must be available immediately when page loads
+
+        window.switchScreen = function(screenId) {
+            console.log('Switching to screen:', screenId);
+
+            try {
+                // Hide all screens
+                document.querySelectorAll('.screen').forEach(screen => {
+                    screen.classList.remove('active');
+                });
+
+                // Show target screen
+                const targetScreen = document.getElementById(screenId);
+                if (targetScreen) {
+                    targetScreen.classList.add('active');
+                    console.log('Screen activated:', screenId);
+                } else {
+                    console.error('Screen not found:', screenId);
+                    return;
+                }
+
+                // Update navigation
+                document.querySelectorAll('.nav-item').forEach(nav => {
+                    nav.classList.remove('active');
+                });
+
+                // Find and activate corresponding nav item
+                const navMap = {
+                    'dashboard-screen': 0,
+                    'pos-screen': 1,
+                    'inventory-screen': 2,
+                    'reports-screen': 3,
+                    'settings-screen': 4
+                };
+
+                const navIndex = navMap[screenId];
+                if (navIndex !== undefined) {
+                    const navItems = document.querySelectorAll('.nav-item');
+                    if (navItems[navIndex]) {
+                        navItems[navIndex].classList.add('active');
+                        console.log('Navigation updated for index:', navIndex);
+                    }
+                }
+
+                // Load screen-specific data if functions are available
+                if (typeof refreshDashboard === 'function' && screenId === 'dashboard-screen') {
+                    refreshDashboard();
+                } else if (typeof loadMenuItems === 'function' && screenId === 'pos-screen') {
+                    loadMenuItems();
+                }
+
+            } catch (error) {
+                console.error('Error switching screen:', error);
+            }
+        };
+
+        // Other critical immediate functions
+        window.showQuickExpenseModal = function() {
+            const modal = document.getElementById('quick-expense-modal');
+            if (modal) modal.classList.add('active');
+            console.log('Quick expense modal shown');
+        };
+
+        window.closeQuickExpenseModal = function() {
+            const modal = document.getElementById('quick-expense-modal');
+            if (modal) modal.classList.remove('active');
+            console.log('Quick expense modal closed');
+        };
+
+        window.showCostAnalysis = function() {
+            const modal = document.getElementById('cost-analysis-modal');
+            if (modal) modal.classList.add('active');
+            console.log('Cost analysis modal shown');
+        };
+
+        window.closeCostAnalysisModal = function() {
+            const modal = document.getElementById('cost-analysis-modal');
+            if (modal) modal.classList.remove('active');
+            console.log('Cost analysis modal closed');
+        };
+
+        window.checkout = function() {
+            console.log('Checkout initiated');
+            alert('ฟังก์ชันเช็คเอาท์ กำลังดำเนินการ...');
+        };
+
+        window.refreshDashboard = function() {
+            console.log('Dashboard refreshed');
+        };
+
+        window.toggleMenu = function() {
+            console.log('Menu toggled');
+        };
+
         // Mobile Manager POS System - JavaScript
 
         // Global variables
         let currentCart = [];
+
+        // DEBUG: Test if functions are working
+        console.log('=== POS SYSTEM DEBUG ===');
+        console.log('switchScreen function available:', typeof window.switchScreen);
+
+        // Test DOM ready state
+        if (document.readyState === 'loading') {
+            console.log('DOM is still loading...');
+        } else if (document.readyState === 'interactive') {
+            console.log('DOM is interactive');
+        } else if (document.readyState === 'complete') {
+            console.log('DOM is fully loaded');
+        }
+
+        // Test if navigation elements exist
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('=== DOM READY TEST ===');
+            const navItems = document.querySelectorAll('.nav-item');
+            console.log('Navigation items found:', navItems.length);
+
+            const screens = document.querySelectorAll('.screen');
+            console.log('Screen elements found:', screens.length);
+
+            navItems.forEach((item, index) => {
+                console.log(`Nav item ${index}:`, item.onclick ? 'Has onclick' : 'No onclick');
+            });
+
+            // Ensure dashboard is active by default
+            setTimeout(() => {
+                console.log('Setting default screen to dashboard...');
+                window.switchScreen('dashboard-screen');
+            }, 100);
+        });
         let menuItems = [];
         let dashboardData = {};
         let inventoryAlerts = [];
@@ -4743,40 +4912,6 @@
             }
         }
 
-        // Screen management
-        function switchScreen(screenId) {
-            // Hide all screens
-            document.querySelectorAll('.screen').forEach(screen => {
-                screen.classList.remove('active');
-            });
-
-            // Show target screen
-            document.getElementById(screenId).classList.add('active');
-
-            // Update navigation
-            document.querySelectorAll('.nav-item').forEach(nav => {
-                nav.classList.remove('active');
-            });
-
-            // Find and activate corresponding nav item
-            const navMap = {
-                'dashboard-screen': 0,
-                'pos-screen': 1,
-                'inventory-screen': 2,
-                'reports-screen': 3,
-                'settings-screen': 4
-            };
-
-            const navIndex = navMap[screenId];
-            if (navIndex !== undefined) {
-                document.querySelectorAll('.nav-item')[navIndex].classList.add('active');
-            }
-
-            // Load screen-specific data
-            loadScreenData(screenId);
-        }
-        window.switchScreen = switchScreen; // Immediate exposure
-
         function loadScreenData(screenId) {
             switch(screenId) {
                 case 'dashboard-screen':
@@ -4800,13 +4935,12 @@
             }
         }
 
-        // Database instance - will be initialized when DOM is ready
-        let db = null;
-
         // Initialize database connection
         function initializeDatabase() {
-            if (typeof DatabaseManager !== 'undefined') {
-                db = new DatabaseManager();
+            if (typeof DatabaseManager !== 'undefined' && typeof db !== 'undefined') {
+                console.log('✅ Database already initialized from database.js');
+                return true;
+            } else if (typeof DatabaseManager !== 'undefined') {
                 console.log('✅ Database initialized');
                 return true;
             } else {
