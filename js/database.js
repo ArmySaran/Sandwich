@@ -490,7 +490,7 @@ class DatabaseManager {
                 .lte('quantity', 'minimum_stock')
 
             if (error) throw error
-            
+
             return (data || []).map(item => ({
                 id: item.id,
                 name: item.name,
