@@ -8,6 +8,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
+    <!-- Supabase client library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <!-- Chart.js for data visualization -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
@@ -2903,6 +2906,10 @@
             }
         }
     </style>
+
+    <!-- Configuration and Database Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/database.js"></script>
 </head>
 <body>
     <!-- Toast Notification Container -->
@@ -3955,50 +3962,71 @@
             }
         }
 
-        // API functions using google.script.run with timeout & rich errors
-        function apiCall(action, params = {}, options = {}) {
-            const { timeoutMs = 12000, silent = false } = options;
-            return new Promise((resolve, reject) => {
-                let finished = false;
-                const timer = setTimeout(() => {
-                    if (!finished) {
-                        finished = true;
-                        const err = new Error('timeout');
-                        if (!silent) showMessage('การเชื่อมต่อช้า โปรดลองอีกครั้ง', 'error');
-                        reject(err);
-                    }
-                }, timeoutMs);
+        // Database instance - will be initialized when DOM is ready
+        let db = null;
 
-                try {
-                    google.script.run
-                        .withSuccessHandler(result => {
-                            if (finished) return; // ignore late
-                            finished = true;
-                            clearTimeout(timer);
-                            if (!result || result.success === undefined) {
-                                if (!silent) showMessage('รูปแบบข้อมูลไม่ถูกต้อง', 'error');
-                                return reject(new Error('invalid_response'));
-                            }
-                            if (!result.success) {
-                                if (!silent) showMessage(result.error || 'เกิดข้อผิดพลาด', 'error');
-                                return reject(new Error(result.error || 'api_error'));
-                            }
-                            resolve(result);
-                        })
-                        .withFailureHandler(error => {
-                            if (finished) return;
-                            finished = true;
-                            clearTimeout(timer);
-                            if (!silent) showMessage('เชื่อมต่อเซิร์ฟเวอร์ไม่ได้', 'error');
-                            reject(error instanceof Error ? error : new Error(String(error)));
-                        })
-                        .doPost({ parameter: { action, ...params } });
-                } catch (ex) {
-                    clearTimeout(timer);
-                    if (!silent) showMessage('ไม่สามารถส่งคำขอได้', 'error');
-                    reject(ex);
+        // Initialize database connection
+        function initializeDatabase() {
+            if (typeof DatabaseManager !== 'undefined') {
+                db = new DatabaseManager();
+                console.log('✅ Database initialized');
+                return true;
+            } else {
+                console.error('❌ DatabaseManager not loaded');
+                showMessage('ไม่สามารถเชื่อมต่อฐานข้อมูลได้', 'error');
+                return false;
+            }
+        }
+
+        // API functions using Supabase with DatabaseManager
+        async function apiCall(action, params = {}, options = {}) {
+            const { timeoutMs = 12000, silent = false } = options;
+            
+            if (!db) {
+                if (!silent) showMessage('ฐานข้อมูลยังไม่พร้อม', 'error');
+                throw new Error('Database not initialized');
+            }
+
+            try {
+                let result;
+                
+                // Map actions to DatabaseManager methods
+                switch (action) {
+                    case 'getDashboardData':
+                        result = await db.getDashboardData();
+                        break;
+                    case 'addSale':
+                        result = await db.addSale(params);
+                        break;
+                    case 'addExpense':
+                        result = await db.addExpense(params);
+                        break;
+                    case 'updateInventory':
+                        result = await db.updateInventory(params);
+                        break;
+                    case 'getRecentSales':
+                        result = await db.getRecentSales(params);
+                        break;
+                    case 'getInventoryAlerts':
+                        result = await db.getInventoryAlerts();
+                        break;
+                    case 'addDailyOperation':
+                        result = await db.addDailyOperation(params);
+                        break;
+                    case 'generateReorderReport':
+                        result = await db.generateReorderReport();
+                        break;
+                    default:
+                        throw new Error(`Unknown action: ${action}`);
                 }
-            });
+
+                return { success: true, data: result };
+                
+            } catch (error) {
+                console.error(`API call failed for action ${action}:`, error);
+                if (!silent) showMessage(error.message || 'เกิดข้อผิดพลาด', 'error');
+                throw error;
+            }
         }
 
         // Dashboard functions
@@ -4912,12 +4940,23 @@
 
         // Initialize app
         document.addEventListener('DOMContentLoaded', function() {
-            // Load initial data
-            refreshDashboard();
-            loadMenuItems();
-
-            // Initialize charts after a short delay to ensure DOM is ready
-            setTimeout(initializeCharts, 500);
+            // Initialize database connection first
+            if (initializeDatabase()) {
+                console.log('✅ Database ready, loading application data');
+                
+                // Load initial data
+                refreshDashboard();
+                loadMenuItems();
+                
+                // Initialize charts after a short delay to ensure DOM is ready
+                setTimeout(initializeCharts, 500);
+            } else {
+                console.error('❌ Database initialization failed');
+                showMessage('ไม่สามารถเชื่อมต่อฐานข้อมูลได้ กำลังใช้งานในโหมดออฟไลน์', 'warning');
+                
+                // Still initialize UI components even if database fails
+                setTimeout(initializeCharts, 500);
+            }
 
             // Initialize filters with default date range (last 7 days)
             initializeFilters();
