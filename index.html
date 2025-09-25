@@ -1403,7 +1403,12 @@
                     enabled: true,
                     rate: 0.01 // 1% cashback
                 }
-            }
+            },
+            // Chart references
+            dashboardChart: null,
+            salesChart: null,
+            productsChart: null,
+            salesReportChart: null
         };
 
         // Utility Functions
@@ -1428,6 +1433,18 @@
 
             generateId: () => {
                 return Date.now().toString(36) + Math.random().toString(36).substr(2);
+            },
+
+            createPlaceholderImage: (text = 'No Image', width = 100, height = 100) => {
+                const svg = `
+                    <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="100%" height="100%" fill="#e5e7eb"/>
+                        <text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" fill="#6b7280">
+                            ${text.length > 15 ? text.substring(0, 15) + '...' : text}
+                        </text>
+                    </svg>
+                `;
+                return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
             },
 
             debounce: (func, wait) => {
@@ -1547,8 +1564,8 @@
                 container.innerHTML = menuItems.map(item => `
                     <div class="menu-item" data-item-id="${item.id}">
                         <div class="menu-item-image">
-                            <img src="${item.image || 'https://via.placeholder.com/100x100?text=' + encodeURIComponent(item.name)}"
-                                 alt="${item.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/100x100?text=No+Image'">
+                            <img src="${item.image || Utils.createPlaceholderImage(item.name)}"
+                                 alt="${item.name}" loading="lazy" onerror="this.src='${Utils.createPlaceholderImage('No Image')}'">
                         </div>
                         <div class="menu-item-info">
                             <h4>${item.name}</h4>
@@ -1944,10 +1961,27 @@
         }
 
         function showAddCustomerModal() {
-            document.getElementById('customer-modal').classList.add('active');
-            document.getElementById('customer-form').reset();
-            document.getElementById('customer-id').value = '';
-            document.querySelector('#customer-modal .modal-title').textContent = 'เพิ่มลูกค้าใหม่';
+            const modal = document.getElementById('add-customer-modal');
+            if (!modal) {
+                console.error('Customer modal not found');
+                return;
+            }
+            modal.classList.add('active');
+
+            const form = document.getElementById('customer-form');
+            if (form) {
+                form.reset();
+            }
+
+            const customerIdField = document.getElementById('customer-id');
+            if (customerIdField) {
+                customerIdField.value = '';
+            }
+
+            const title = document.querySelector('#add-customer-modal .modal-title');
+            if (title) {
+                title.textContent = 'เพิ่มลูกค้าใหม่';
+            }
         }
 
         function editCustomer(customerId) {
@@ -2295,6 +2329,11 @@
             const ctx = document.getElementById('salesChart');
             if (!ctx) return;
 
+            // Destroy existing chart if it exists
+            if (AppState.dashboardChart) {
+                AppState.dashboardChart.destroy();
+            }
+
             // Generate sample data for last 7 days
             const labels = [];
             const data = [];
@@ -2308,7 +2347,7 @@
                 data.push(Math.floor(Math.random() * 5000) + 1000);
             }
 
-            new Chart(ctx, {
+            AppState.dashboardChart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: labels,
@@ -3166,6 +3205,11 @@
             const ctx = document.getElementById('salesReportChart');
             if (!ctx) return;
 
+            // Destroy existing chart if it exists
+            if (AppState.salesReportChart) {
+                AppState.salesReportChart.destroy();
+            }
+
             // Sample monthly data
             const monthlyData = [
                 { month: 'ม.ค.', sales: 45000 },
@@ -3176,7 +3220,7 @@
                 { month: 'มิ.ย.', sales: 67000 }
             ];
 
-            new Chart(ctx, {
+            AppState.salesReportChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: monthlyData.map(d => d.month),
@@ -3360,6 +3404,36 @@
 
             closeSettings();
             Toast.show('บันทึกการตั้งค่าแล้ว', 'success');
+        }
+
+        function updateLoyaltySettings() {
+            try {
+                const loyaltyEnabled = document.getElementById('loyalty-enabled')?.checked || false;
+                const loyaltyRate = parseFloat(document.getElementById('loyalty-rate')?.value) || 0.01;
+
+                AppState.settings.loyaltyPoints.enabled = loyaltyEnabled;
+                AppState.settings.loyaltyPoints.rate = loyaltyRate / 100; // Convert percentage to decimal
+
+                Toast.show('อัปเดตการตั้งค่าสะสมคะแนนแล้ว', 'success');
+            } catch (error) {
+                console.error('Error updating loyalty settings:', error);
+                Toast.show('ไม่สามารถบันทึกการตั้งค่าได้', 'error');
+            }
+        }
+
+        function updateSalesReport() {
+            try {
+                const period = document.getElementById('sales-period')?.value || 'monthly';
+                console.log('Updating sales report for period:', period);
+
+                // Refresh the sales report chart with new period
+                loadSalesReport();
+
+                Toast.show('อัปเดตรายงานขายแล้ว', 'info');
+            } catch (error) {
+                console.error('Error updating sales report:', error);
+                Toast.show('ไม่สามารถอัปเดตรายงานได้', 'error');
+            }
         }
 
         // Event Listeners
@@ -4018,7 +4092,7 @@
         // Service Worker for offline support (optional)
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/sw.js')
+                navigator.serviceWorker.register('./sw.js')
                     .then(function(registration) {
                         console.log('SW registered: ', registration);
                     })

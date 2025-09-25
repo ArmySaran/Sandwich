@@ -331,6 +331,11 @@ class LocalDatabaseManager {
         })
     }
 
+    // Alias for read method for compatibility
+    async findById(table, id) {
+        return await this.read(table, id)
+    }
+
     async getAll(table, filters = {}) {
         if (!this.db) throw new Error('Database not initialized')
 
