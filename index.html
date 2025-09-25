@@ -2402,9 +2402,13 @@
         }
 
         // Show toast notification
-        function showToast(message, type = 'info', duration = 3000) {
-            Toast.show(message, type, duration);
+        let showToast = window.showToast;
+        if (typeof showToast !== 'function') {
+            showToast = (message, type = 'info', duration = 3000) => {
+                Toast.show(message, type, duration);
+            };
         }
+        window.showToast = showToast;
 
         // Format date function
         function formatDate(date) {
@@ -6339,6 +6343,16 @@
         function closePeakHoursModal() {
             document.getElementById('peak-hours-modal').classList.remove('active');
         }
+
+        // Ensure navigation and modal handlers are globally accessible
+        Object.assign(window, {
+            showScreen,
+            showSettings,
+            showSalesModal,
+            showSalesHistoryModal,
+            showPeakHoursModal,
+            showExpenseModal
+        });
 
         async function loadPeakHoursData() {
             try {
