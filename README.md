@@ -1,3 +1,4 @@
+B
 # 🥪 ร้าน Sandwich ตัวกลม - Local POS System
 
 ## 🎉 PROJECT STATUS: COMPLETE LOCAL DATABASE SYSTEM

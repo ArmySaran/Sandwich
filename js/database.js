@@ -68,6 +68,14 @@ class LocalDatabaseManager {
                     recipesStore.createIndex('ingredient_id', 'ingredient_id')
                 }
 
+                // Ingredient Usage Tracking
+                if (!db.objectStoreNames.contains('ingredient_usage')) {
+                    const usageStore = db.createObjectStore('ingredient_usage', { keyPath: 'id' })
+                    usageStore.createIndex('ingredient_id', 'ingredient_id')
+                    usageStore.createIndex('date', 'date')
+                    usageStore.createIndex('type', 'type')
+                }
+
                 // Sales
                 if (!db.objectStoreNames.contains('sales')) {
                     const salesStore = db.createObjectStore('sales', { keyPath: 'id' })
@@ -226,6 +234,105 @@ class LocalDatabaseManager {
                     supplier: 'ฟาร์มสด',
                     category: 'ผัก',
                     created_at: new Date().toISOString()
+                },
+                {
+                    id: 'ing_bread_whole_wheat',
+                    name: 'ขนมปังโฮลวีท',
+                    unit: 'แผ่น',
+                    cost_per_unit: 2.50,
+                    quantity: 50,
+                    minimum_stock: 10,
+                    supplier: 'เบเกอรี่ใกล้บ้าน',
+                    category: 'ขนมปัง',
+                    created_at: new Date().toISOString()
+                },
+                {
+                    id: 'ing_chicken',
+                    name: 'ไก่ย่าง',
+                    unit: 'แผ่น',
+                    cost_per_unit: 8.00,
+                    quantity: 30,
+                    minimum_stock: 5,
+                    supplier: 'ผู้จำหน่ายเนื้อ',
+                    category: 'เนื้อสัตว์',
+                    created_at: new Date().toISOString()
+                },
+                {
+                    id: 'ing_tuna',
+                    name: 'ทูน่า',
+                    unit: 'ช้อนโต๊ะ',
+                    cost_per_unit: 6.00,
+                    quantity: 20,
+                    minimum_stock: 3,
+                    supplier: 'ผู้จำหน่ายอาหารทะเล',
+                    category: 'เนื้อสัตว์',
+                    created_at: new Date().toISOString()
+                },
+                {
+                    id: 'ing_egg',
+                    name: 'ไข่ดาว',
+                    unit: 'ฟอง',
+                    cost_per_unit: 4.00,
+                    quantity: 40,
+                    minimum_stock: 10,
+                    supplier: 'ฟาร์มไข่',
+                    category: 'เนื้อสัตว์',
+                    created_at: new Date().toISOString()
+                },
+                {
+                    id: 'ing_cucumber',
+                    name: 'แตงกวา',
+                    unit: 'แผ่น',
+                    cost_per_unit: 0.50,
+                    quantity: 50,
+                    minimum_stock: 10,
+                    supplier: 'ฟาร์มสด',
+                    category: 'ผัก',
+                    created_at: new Date().toISOString()
+                },
+                {
+                    id: 'ing_onion',
+                    name: 'หอมใหญ่',
+                    unit: 'แผ่น',
+                    cost_per_unit: 0.75,
+                    quantity: 40,
+                    minimum_stock: 8,
+                    supplier: 'ฟาร์มสด',
+                    category: 'ผัก',
+                    created_at: new Date().toISOString()
+                },
+                {
+                    id: 'ing_mayo',
+                    name: 'มายองเนส',
+                    unit: 'ช้อนชา',
+                    cost_per_unit: 0.25,
+                    quantity: 100,
+                    minimum_stock: 20,
+                    supplier: 'ร้านขายปลีก',
+                    category: 'เครื่องปรุง',
+                    created_at: new Date().toISOString()
+                },
+                {
+                    id: 'ing_mustard',
+                    name: 'มัสตาร์ด',
+                    unit: 'ช้อนชา',
+                    cost_per_unit: 0.30,
+                    quantity: 80,
+                    minimum_stock: 15,
+                    supplier: 'ร้านขายปลีก',
+                    category: 'เครื่องปรุง',
+                    created_at: new Date().toISOString()
+                },
+                {
+                    id: 'ing_butter',
+                    name: 'เนย',
+                    unit: 'ช้อนชา',
+                    cost_per_unit: 0.50,
+                    quantity: 60,
+                    minimum_stock: 12,
+                    supplier: 'บริษัทนม',
+                    category: 'นม',
+                    created_at: new Date().toISOString()
                 }
             ]
 
@@ -257,6 +364,76 @@ class LocalDatabaseManager {
                 }
             ]
 
+            // Default recipes (Menu Item -> Ingredients mapping)
+            const recipes = [
+                // Ham & Cheese Sandwich Recipe
+                {
+                    id: 'recipe_ham_cheese_bread',
+                    menu_item_id: 'menu_ham_cheese',
+                    ingredient_id: 'ing_bread_white',
+                    quantity: 2, // 2 slices of bread
+                    created_at: new Date().toISOString()
+                },
+                {
+                    id: 'recipe_ham_cheese_ham',
+                    menu_item_id: 'menu_ham_cheese',
+                    ingredient_id: 'ing_ham',
+                    quantity: 2, // 2 slices of ham
+                    created_at: new Date().toISOString()
+                },
+                {
+                    id: 'recipe_ham_cheese_cheese',
+                    menu_item_id: 'menu_ham_cheese',
+                    ingredient_id: 'ing_cheese',
+                    quantity: 1, // 1 slice of cheese
+                    created_at: new Date().toISOString()
+                },
+                {
+                    id: 'recipe_ham_cheese_lettuce',
+                    menu_item_id: 'menu_ham_cheese',
+                    ingredient_id: 'ing_lettuce',
+                    quantity: 2, // 2 leaves of lettuce
+                    created_at: new Date().toISOString()
+                },
+                {
+                    id: 'recipe_ham_cheese_tomato',
+                    menu_item_id: 'menu_ham_cheese',
+                    ingredient_id: 'ing_tomato',
+                    quantity: 2, // 2 slices of tomato
+                    created_at: new Date().toISOString()
+                },
+                {
+                    id: 'recipe_ham_cheese_mayo',
+                    menu_item_id: 'menu_ham_cheese',
+                    ingredient_id: 'ing_mayo',
+                    quantity: 1, // 1 tsp of mayo
+                    created_at: new Date().toISOString()
+                },
+
+                // Grilled Cheese Sandwich Recipe
+                {
+                    id: 'recipe_grilled_cheese_bread',
+                    menu_item_id: 'menu_grilled_cheese',
+                    ingredient_id: 'ing_bread_white',
+                    quantity: 2, // 2 slices of bread
+                    created_at: new Date().toISOString()
+                },
+                {
+                    id: 'recipe_grilled_cheese_cheese',
+                    menu_item_id: 'menu_grilled_cheese',
+                    ingredient_id: 'ing_cheese',
+                    quantity: 2, // 2 slices of cheese
+                    created_at: new Date().toISOString()
+                },
+                {
+                    id: 'recipe_grilled_cheese_butter',
+                    menu_item_id: 'menu_grilled_cheese',
+                    ingredient_id: 'ing_butter',
+                    quantity: 2, // 2 tsp of butter for grilling
+                    created_at: new Date().toISOString()
+                }
+            ]
+
             // Default settings
             const settings = [
                 { key: 'business_name', value: 'ร้าน Sandwich ตัวกลม' },
@@ -274,6 +451,9 @@ class LocalDatabaseManager {
             }
             for (const item of menuItems) {
                 await this.create('menu_items', item)
+            }
+            for (const recipe of recipes) {
+                await this.create('recipes', recipe)
             }
             for (const setting of settings) {
                 await this.create('settings', setting)
@@ -381,6 +561,24 @@ class LocalDatabaseManager {
                 }
 
                 resolve(results)
+            }
+
+            request.onerror = () => reject(request.error)
+        })
+    }
+
+    // Query records by index
+    async query(table, indexName, value) {
+        if (!this.db) throw new Error('Database not initialized')
+
+        return new Promise((resolve, reject) => {
+            const transaction = this.db.transaction([table], 'readonly')
+            const store = transaction.objectStore(table)
+            const index = store.index(indexName)
+            const request = index.getAll(value)
+
+            request.onsuccess = () => {
+                resolve(request.result || [])
             }
 
             request.onerror = () => reject(request.error)
