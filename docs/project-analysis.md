@@ -26,13 +26,13 @@ Modern Progressive Web App (PWA)
 
 ### Backend Infrastructure
 ```
-Supabase Backend-as-a-Service
-├── PostgreSQL Database
-├── Real-time Subscriptions
-├── Row Level Security (RLS)
-├── Authentication & Authorization
-├── Storage for Files/Images
-└── Edge Functions (Future)
+Local-First Architecture
+├── IndexedDB (Client-side Database)
+├── Offline Data Persistence
+├── No Network Dependencies
+├── Local Authentication & Sessions
+├── Browser-based Storage
+└── Progressive Web App Features
 ```
 
 ### Deployment Pipeline
@@ -229,18 +229,18 @@ FROM menu_items m;
 
 ## 🔄 Data Flow & System Integration
 
-### Real-time Data Synchronization
+### Local-First Data Synchronization
 1. **User Action** → Frontend JavaScript
-2. **API Call** → Supabase Client Library
-3. **Database Update** → PostgreSQL with RLS
-4. **Real-time Broadcast** → Supabase Realtime
-5. **UI Update** → All connected clients receive updates
+2. **Validation** → Client-side Data Validation
+3. **Database Update** → IndexedDB with Transactions
+4. **UI Update** → Immediate Local Response
+5. **Data Persistence** → Browser-based Storage
 
 ### Offline-First Architecture
 1. **Service Worker** caches essential app resources
-2. **IndexedDB** stores offline transaction queue
-3. **Background Sync** processes queued operations when online
-4. **Conflict Resolution** handles data synchronization conflicts
+2. **IndexedDB** stores all application data locally
+3. **Local Processing** handles all operations without network
+4. **Data Export** enables backup and migration features
 
 ### Business Intelligence Pipeline
 1. **Transaction Data** captured in real-time
@@ -263,11 +263,11 @@ graph LR
 ```
 
 ### Scalability Considerations
-- **Database**: Supabase PostgreSQL scales automatically
-- **Frontend**: GitHub Pages CDN provides global distribution
-- **Real-time**: Supabase handles concurrent connections
-- **Storage**: Expandable for receipts and images
-- **Performance**: Service worker caching reduces server load
+- **Database**: IndexedDB scales with device storage capacity
+- **Frontend**: Progressive Web App runs entirely on client device
+- **Performance**: No network latency, instant local responses
+- **Storage**: Browser storage quotas typically 50MB+ per origin
+- **Distribution**: Single-file deployment, no server infrastructure needed
 
 ## 💡 Business Intelligence & Analytics
 
@@ -312,18 +312,18 @@ class BusinessIntelligence {
 
 ## 🔐 Security & Data Protection
 
-### Multi-Layer Security
-1. **Authentication**: Supabase Auth with social login support
-2. **Authorization**: Row Level Security (RLS) policies
-3. **Data Encryption**: HTTPS/TLS for all communications
-4. **Input Validation**: Client and server-side validation
-5. **Audit Logging**: All transactions logged with timestamps
+### Local-First Security
+1. **Authentication**: Simple local password/PIN protection
+2. **Data Privacy**: All data stored locally on user's device
+3. **No Network Exposure**: Zero external data transmission
+4. **Input Validation**: Client-side validation and sanitization
+5. **Browser Security**: Leverages browser's built-in security features
 
 ### Privacy Protection
-- User data isolated with RLS policies
-- No sensitive data in client-side code
-- Secure credential management
-- GDPR-compliant data handling
+- All user data remains on local device
+- No external services or data sharing
+- Secure local storage with browser encryption
+- Complete data ownership and control
 
 ## 🎯 Target Use Cases
 
@@ -369,11 +369,11 @@ class BusinessIntelligence {
 - **Growth Enablement**: Data-driven insights support business expansion
 
 ### Technical Performance Targets
-- **Load Time**: < 3 seconds initial page load
-- **Offline Capability**: Core functions available without internet
-- **Data Accuracy**: 99.9% synchronization accuracy between devices
-- **Uptime**: 99.5% availability (GitHub Pages + Supabase SLA)
-- **Mobile Performance**: Lighthouse score > 90 on all metrics
+- **Load Time**: < 1 second initial page load (no network requests)
+- **Offline Capability**: 100% functionality available offline
+- **Data Reliability**: Local IndexedDB with transaction consistency
+- **Availability**: 100% uptime (runs entirely in browser)
+- **Mobile Performance**: Lighthouse score > 95 on all metrics
 
 ## 🎯 Conclusion
 

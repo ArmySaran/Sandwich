@@ -39,8 +39,35 @@ build/
 # Local development
 *.local
 
-# Supabase local development
-.supabase/
+# OS-specific files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editor files
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+
+# Build artifacts
+dist/
+build/
+*.min.js
+*.min.css
+
+# Dependencies (if using npm/node modules)
+node_modules/
+
+# Local configuration
+.env.local
+config.local.js
 
 # Backup files
 *.backup

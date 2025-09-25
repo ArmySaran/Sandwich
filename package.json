@@ -25,17 +25,17 @@
     "sandwich-shop"
   ],
   "author": {
-    "name": "Your Name",
-    "email": "your.email@example.com"
+    "name": "Sandwich POS Developer",
+    "email": "developer@sandwich-pos.local"
   },
   "license": "MIT",
-  "homepage": "https://github.com/yourusername/sandwich-pos",
+  "homepage": "https://github.com/sandwich-pos/local-pos-system",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yourusername/sandwich-pos.git"
+    "url": "git+https://github.com/sandwich-pos/local-pos-system.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/sandwich-pos/issues"
+    "url": "https://github.com/sandwich-pos/local-pos-system/issues"
   },
   "engines": {
     "node": ">=18.0.0"

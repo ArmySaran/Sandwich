@@ -3436,6 +3436,275 @@
                 }
             });
 
+            // Comprehensive Button Event Listeners
+            // Form Submit Buttons
+            const expenseFormSubmit = document.querySelector('#expense-form button[type="submit"]');
+            if (expenseFormSubmit) {
+                expenseFormSubmit.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const form = document.getElementById('expense-form');
+                    if (form) {
+                        form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+                    }
+                });
+            }
+
+            const customerFormSubmit = document.querySelector('#add-customer-form button[type="submit"]');
+            if (customerFormSubmit) {
+                customerFormSubmit.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const form = document.getElementById('add-customer-form');
+                    if (form) {
+                        form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+                    }
+                });
+            }
+
+            const inventoryFormSubmit = document.querySelector('#add-inventory-form button[type="submit"]');
+            if (inventoryFormSubmit) {
+                inventoryFormSubmit.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const form = document.getElementById('add-inventory-form');
+                    if (form) {
+                        form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+                    }
+                });
+            }
+
+            // Navigation Button Event Listeners
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                if (!item.onclick) {
+                    item.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const screen = this.getAttribute('data-screen');
+                        if (screen) {
+                            switchScreen(screen + '-screen');
+                        }
+                    });
+                }
+            });
+
+            // Add click effects to all buttons
+            const allButtons = document.querySelectorAll('button');
+            allButtons.forEach(button => {
+                // Add loading state functionality
+                button.addEventListener('click', function() {
+                    // Add visual feedback for button clicks
+                    if (!this.disabled) {
+                        this.style.transform = 'scale(0.98)';
+                        setTimeout(() => {
+                            this.style.transform = '';
+                        }, 100);
+                    }
+                });
+
+                // Add keyboard support for Enter and Space
+                button.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        this.click();
+                    }
+                });
+
+                // Add touch support for mobile
+                button.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.98)';
+                }, { passive: true });
+
+                button.addEventListener('touchend', function() {
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 100);
+                }, { passive: true });
+            });
+
+            // Modal backdrop click handlers (for dynamically created modals)
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('modal-backdrop')) {
+                    const modal = e.target.closest('.modal');
+                    if (modal) {
+                        modal.classList.remove('active');
+                    }
+                }
+            });
+
+            // Add event delegation for dynamically created buttons
+            document.addEventListener('click', function(e) {
+                const button = e.target.closest('button');
+                if (button) {
+                    // Handle dynamically created buttons that might not have onclick
+                    const buttonText = button.textContent.trim();
+                    const buttonClass = button.className;
+
+                    // Handle specific button patterns
+                    if (buttonText === 'เพิ่ม' && buttonClass.includes('btn-primary')) {
+                        // This might be an "Add Category" button
+                        if (button.closest('#manage-categories-modal')) {
+                            addCategory();
+                        }
+                    }
+
+                    // Handle menu item add buttons in POS
+                    if (buttonText === '➕ เพิ่ม' && buttonClass.includes('btn-primary')) {
+                        const menuItem = button.closest('.menu-item');
+                        if (menuItem) {
+                            const itemId = menuItem.getAttribute('data-item-id');
+                            if (itemId) {
+                                addToCart(itemId);
+                            }
+                        }
+                    }
+
+                    // Handle cart quantity buttons
+                    if ((buttonText === '+' || buttonText === '-') && buttonClass.includes('btn-outline')) {
+                        const cartItem = button.closest('.cart-item');
+                        if (cartItem) {
+                            // Extract item ID and quantity change from onclick attribute
+                            const onclickAttr = button.getAttribute('onclick');
+                            if (onclickAttr) {
+                                try {
+                                    eval(onclickAttr);
+                                } catch (error) {
+                                    console.error('Error executing cart button action:', error);
+                                }
+                            }
+                        }
+                    }
+
+                    // Handle remove from cart buttons
+                    if (buttonText === '🗑' && buttonClass.includes('btn-error')) {
+                        const cartItem = button.closest('.cart-item');
+                        if (cartItem) {
+                            const onclickAttr = button.getAttribute('onclick');
+                            if (onclickAttr) {
+                                try {
+                                    eval(onclickAttr);
+                                } catch (error) {
+                                    console.error('Error executing remove button action:', error);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Add form validation helpers
+            const allForms = document.querySelectorAll('form');
+            allForms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    const requiredFields = form.querySelectorAll('[required]');
+                    let isValid = true;
+
+                    requiredFields.forEach(field => {
+                        if (!field.value.trim()) {
+                            field.style.borderColor = 'var(--error)';
+                            isValid = false;
+                        } else {
+                            field.style.borderColor = '';
+                        }
+                    });
+
+                    if (!isValid) {
+                        e.preventDefault();
+                        showToast('กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน', 'error');
+                    }
+                });
+            });
+
+            // Handle all form submissions properly
+            // Add customer form
+            const addCustomerForm = document.getElementById('add-customer-form');
+            if (addCustomerForm) {
+                addCustomerForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const formData = new FormData(this);
+
+                    const customer = {
+                        id: Utils.generateId(),
+                        name: formData.get('name') || document.getElementById('customer-name').value,
+                        phone: formData.get('phone') || document.getElementById('customer-phone').value,
+                        email: formData.get('email') || document.getElementById('customer-email').value || '',
+                        address: formData.get('address') || document.getElementById('customer-address').value || '',
+                        created_at: new Date().toISOString(),
+                        totalSpent: 0,
+                        visits: 0,
+                        lastVisit: new Date().toISOString()
+                    };
+
+                    AppState.customers.push(customer);
+                    closeAddCustomerModal();
+                    loadCustomers();
+                    showToast('✅ เพิ่มลูกค้าใหม่สำเร็จ', 'success');
+                });
+            }
+
+            // Add inventory form
+            const addInventoryForm = document.getElementById('add-inventory-form');
+            if (addInventoryForm) {
+                addInventoryForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    // Handle inventory form submission
+                    const formData = new FormData(this);
+                    console.log('Inventory form submitted:', Object.fromEntries(formData));
+                    closeAddInventoryModal();
+                    showToast('✅ เพิ่มสินค้าสำเร็จ', 'success');
+                });
+            }
+
+            // Settings form
+            const settingsForm = document.querySelector('#settings-modal form');
+            if (settingsForm) {
+                settingsForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    saveSettings();
+                });
+            }
+
+            // Menu item form
+            document.addEventListener('submit', function(e) {
+                if (e.target.id === 'add-menu-item-form') {
+                    e.preventDefault();
+                    saveMenuItem();
+                }
+
+                if (e.target.id === 'edit-menu-item-form') {
+                    e.preventDefault();
+                    saveEditedMenuItem();
+                }
+            });
+
+            // Add input field enhancement
+            const allInputs = document.querySelectorAll('input, textarea, select');
+            allInputs.forEach(input => {
+                // Clear error styling on input
+                input.addEventListener('input', function() {
+                    this.style.borderColor = '';
+                });
+
+                // Add focus styling
+                input.addEventListener('focus', function() {
+                    this.style.borderColor = 'var(--primary)';
+                });
+
+                input.addEventListener('blur', function() {
+                    if (!this.style.borderColor || this.style.borderColor === 'var(--primary)') {
+                        this.style.borderColor = '';
+                    }
+                });
+            });
+
+            // Handle number inputs for mobile
+            const numberInputs = document.querySelectorAll('input[type="number"]');
+            numberInputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    // Ensure positive numbers where appropriate
+                    if (this.min === '0' && parseFloat(this.value) < 0) {
+                        this.value = '0';
+                    }
+                });
+            });
+
             console.log('🥪 POS System initialized successfully!');
         });
 
@@ -3571,6 +3840,116 @@
 
             } catch (error) {
                 console.error('❌ Error loading menu items:', error);
+            }
+        }
+
+        async function editMenuItem(itemId) {
+            try {
+                const item = await window.db.findById('menu_items', itemId);
+                if (!item) return;
+
+                const modalHTML = `
+                    <div id="edit-menu-item-modal" class="modal active">
+                        <div class="modal-backdrop" onclick="closeEditMenuItemModal()"></div>
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 class="modal-title">แก้ไขเมนู</h3>
+                                <button class="modal-close" onclick="closeEditMenuItemModal()">×</button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="edit-menu-item-form">
+                                    <input type="hidden" id="edit-item-id" value="${item.id}">
+                                    <div class="form-group">
+                                        <label class="form-label">ชื่อเมนู</label>
+                                        <input type="text" class="form-input" id="edit-menu-name" value="${item.name}" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">ราคา (บาท)</label>
+                                        <input type="number" class="form-input" id="edit-menu-price" value="${item.price}" min="0" step="0.01" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">หมวดหมู่</label>
+                                        <select class="form-input" id="edit-menu-category" required>
+                                            <option value="แซนด์วิช" ${item.category === 'แซนด์วิช' ? 'selected' : ''}>แซนด์วิช</option>
+                                            <option value="เครื่องดื่ม" ${item.category === 'เครื่องดื่ม' ? 'selected' : ''}>เครื่องดื่ม</option>
+                                            <option value="ของหวาน" ${item.category === 'ของหวาน' ? 'selected' : ''}>ของหวาน</option>
+                                            <option value="อื่นๆ" ${item.category === 'อื่นๆ' ? 'selected' : ''}>อื่นๆ</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">คำอธิบาย</label>
+                                        <textarea class="form-input" id="edit-menu-description" rows="3" placeholder="คำอธิบายเมนู (ไม่บังคับ)">${item.description || ''}</textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">URL รูปภาพ</label>
+                                        <input type="url" class="form-input" id="edit-menu-image" value="${item.image || ''}" placeholder="https://example.com/image.jpg">
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="flex items-center gap-2">
+                                            <input type="checkbox" id="edit-menu-available" ${item.is_available ? 'checked' : ''}>
+                                            <label for="edit-menu-available">พร้อมจำหน่าย</label>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" onclick="closeEditMenuItemModal()">ยกเลิก</button>
+                                <button type="button" class="btn btn-primary" onclick="saveEditedMenuItem()">บันทึก</button>
+                                <button type="button" class="btn btn-error" onclick="deleteMenuItem('${item.id}')">ลบเมนู</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+            } catch (error) {
+                console.error('❌ Error loading menu item for edit:', error);
+                showToast('❌ ไม่สามารถโหลดข้อมูลเมนูได้', 'error');
+            }
+        }
+
+        function closeEditMenuItemModal() {
+            const modal = document.getElementById('edit-menu-item-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        async function saveEditedMenuItem() {
+            try {
+                const id = document.getElementById('edit-item-id').value;
+                const menuItem = {
+                    name: document.getElementById('edit-menu-name').value,
+                    price: parseFloat(document.getElementById('edit-menu-price').value),
+                    category: document.getElementById('edit-menu-category').value,
+                    description: document.getElementById('edit-menu-description').value,
+                    image: document.getElementById('edit-menu-image').value,
+                    is_available: document.getElementById('edit-menu-available').checked
+                };
+
+                await window.db.update('menu_items', id, menuItem);
+                showToast('✅ อัพเดทเมนูสำเร็จ', 'success');
+                closeEditMenuItemModal();
+                await loadMenuItems();
+
+            } catch (error) {
+                console.error('❌ Error updating menu item:', error);
+                showToast('❌ ไม่สามารถอัพเดทเมนูได้', 'error');
+            }
+        }
+
+        async function deleteMenuItem(itemId) {
+            if (confirm('ต้องการลบเมนูนี้หรือไม่? การลบจะไม่สามารถกู้คืนได้')) {
+                try {
+                    await window.db.delete('menu_items', itemId);
+                    showToast('✅ ลบเมนูสำเร็จ', 'success');
+                    closeEditMenuItemModal();
+                    await loadMenuItems();
+                } catch (error) {
+                    console.error('❌ Error deleting menu item:', error);
+                    showToast('❌ ไม่สามารถลบเมนูได้', 'error');
+                }
             }
         }
 
