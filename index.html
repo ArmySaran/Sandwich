@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#0c8ce9">
     <meta name="description" content="ระบบจัดการร้านแซนด์วิชที่ทันสมัย - POS System for Sandwich Shop">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Sandwich POS">
 
@@ -2575,11 +2575,6 @@
             }
         };
 
-        // Toast function alias for compatibility
-        const showToast = (message, type = 'success', duration = 3000) => {
-            Toast.show(message, type, duration);
-        };
-
         // Screen Navigation
         function switchScreen(screenId) {
             // Hide all screens
@@ -2624,6 +2619,24 @@
                     loadCostAnalysis();
                     break;
             }
+        }
+
+        // Make switchScreen globally available
+        window.switchScreen = switchScreen;
+
+        // Alias function for mobile navigation
+        function showScreen(screenId) {
+            // Convert short screen names to full screen IDs
+            const screenMap = {
+                'menu': 'dashboard-screen',
+                'sales': 'pos-screen',
+                'inventory': 'inventory-screen',
+                'cost-analysis': 'cost-analysis-screen',
+                'analytics': 'reports-screen'
+            };
+            
+            const fullScreenId = screenMap[screenId] || screenId;
+            switchScreen(fullScreenId);
         }
 
         // POS Functions
