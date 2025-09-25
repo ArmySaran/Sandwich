@@ -26,6 +26,10 @@
     <!-- Chart.js for analytics -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js" defer></script>
 
+    <!-- Local JavaScript files -->
+    <script src="js/config.js" defer></script>
+    <script src="js/database.js" defer></script>
+
     <style>
         /* CSS Custom Properties */
         :root {
@@ -827,19 +831,68 @@
 
             <!-- Inventory Screen -->
             <div id="inventory-screen" class="screen">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">จัดการสต็อค</h3>
-                        <button class="btn btn-primary btn-sm" onclick="showAddItemModal()">
-                            ➕ เพิ่มสินค้า
-                        </button>
-                    </div>
-                    <div class="card-body">
-                        <div class="mb-4">
-                            <input type="search" class="form-input" placeholder="ค้นหาสินค้า..." id="inventory-search">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Menu Management -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">จัดการเมนู</h3>
+                            <div class="flex gap-2">
+                                <button class="btn btn-secondary btn-sm" onclick="exportData()">📤 ส่งออก</button>
+                                <label class="btn btn-secondary btn-sm cursor-pointer">
+                                    📥 นำเข้า
+                                    <input type="file" accept=".json" onchange="importData(event)" style="display: none;">
+                                </label>
+                                <button class="btn btn-primary btn-sm" onclick="showAddMenuItemModal()">
+                                    ➕ เพิ่มเมนู
+                                </button>
+                            </div>
                         </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="inventory-container">
-                            <!-- Inventory items will be loaded here -->
+                        <div class="card-body">
+                            <div class="mb-4">
+                                <div class="flex gap-2 mb-3">
+                                    <select class="form-select flex-1" id="menu-category-filter" onchange="filterMenuItems()">
+                                        <option value="">ทุกหมวดหมู่</option>
+                                        <option value="sandwich">🥪 แซนด์วิช</option>
+                                        <option value="beverage">🥤 เครื่องดื่ม</option>
+                                        <option value="side">🍟 เครื่องเคียง</option>
+                                        <option value="dessert">🍰 ของหวาน</option>
+                                        <option value="combo">🍽️ คอมโบ</option>
+                                    </select>
+                                    <button class="btn btn-secondary btn-sm" onclick="showManageCategoriesModal()">
+                                        จัดการหมวดหมู่
+                                    </button>
+                                </div>
+                                <input type="search" class="form-input" placeholder="ค้นหาเมนู..." id="menu-search" oninput="filterMenuItems()">
+                            </div>
+                            <div class="grid grid-cols-1 gap-3" id="menu-items-container">
+                                <!-- Menu items will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ingredient Management -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">จัดการวัตถุดิบ</h3>
+                            <button class="btn btn-primary btn-sm" onclick="showAddIngredientModal()">
+                                ➕ เพิ่มวัตถุดิบ
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-4">
+                                <div class="flex gap-2 mb-3">
+                                    <select class="form-select flex-1" id="ingredient-status-filter" onchange="filterIngredients()">
+                                        <option value="">ทั้งหมด</option>
+                                        <option value="low_stock">สต็อคต่ำ</option>
+                                        <option value="out_of_stock">หมด</option>
+                                        <option value="in_stock">มีสต็อค</option>
+                                    </select>
+                                </div>
+                                <input type="search" class="form-input" placeholder="ค้นหาวัตถุดิบ..." id="ingredient-search" oninput="filterIngredients()">
+                            </div>
+                            <div class="grid grid-cols-1 gap-3" id="ingredients-container">
+                                <!-- Ingredients will be loaded here -->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1430,6 +1483,11 @@
             }
         };
 
+        // Toast function alias for compatibility
+        const showToast = (message, type = 'success', duration = 3000) => {
+            Toast.show(message, type, duration);
+        };
+
         // Screen Navigation
         function switchScreen(screenId) {
             // Hide all screens
@@ -1460,14 +1518,323 @@
                     loadDashboard();
                     break;
                 case 'pos-screen':
-                    loadMenu();
+                    loadPOSMenu();
                     break;
                 case 'inventory-screen':
-                    loadInventory();
+                    loadMenuItems();
+                    loadIngredients();
                     break;
                 case 'reports-screen':
                     loadReports();
                     break;
+            }
+        }
+
+        // POS Functions
+        async function loadPOSMenu() {
+            try {
+                if (!window.db || !window.db.isReady) {
+                    console.log('⏳ Database not ready for POS menu, retrying...');
+                    setTimeout(loadPOSMenu, 1000);
+                    return;
+                }
+
+                const menuItems = await window.db.getMenuItems();
+                const container = document.getElementById('menu-container');
+
+                if (!container) return;
+
+                container.innerHTML = menuItems.map(item => `
+                    <div class="menu-item" data-item-id="${item.id}">
+                        <div class="menu-item-image">
+                            <img src="${item.image || 'https://via.placeholder.com/100x100?text=' + encodeURIComponent(item.name)}"
+                                 alt="${item.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/100x100?text=No+Image'">
+                        </div>
+                        <div class="menu-item-info">
+                            <h4>${item.name}</h4>
+                            <p class="price">${Utils.formatCurrency(item.price)}</p>
+                            <button class="btn btn-primary btn-sm" onclick="addToCart('${item.id}')">
+                                ➕ เพิ่ม
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Setup search functionality
+                const searchInput = document.getElementById('menu-search');
+                if (searchInput) {
+                    searchInput.addEventListener('input', filterPOSMenu);
+                }
+
+            } catch (error) {
+                console.error('❌ Error loading POS menu:', error);
+            }
+        }
+
+        function filterPOSMenu() {
+            const searchTerm = document.getElementById('menu-search').value.toLowerCase();
+            const menuItems = document.querySelectorAll('#menu-container .menu-item');
+
+            menuItems.forEach(item => {
+                const itemName = item.querySelector('h4').textContent.toLowerCase();
+                item.style.display = itemName.includes(searchTerm) ? 'block' : 'none';
+            });
+        }
+
+        async function addToCart(itemId) {
+            try {
+                const menuItem = await window.db.findById('menu_items', itemId);
+                if (!menuItem) return;
+
+                // Check if item already exists in cart
+                const existingItem = AppState.cart.find(item => item.id === itemId);
+
+                if (existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    AppState.cart.push({
+                        id: itemId,
+                        name: menuItem.name,
+                        price: menuItem.price,
+                        quantity: 1
+                    });
+                }
+
+                updateCartDisplay();
+                showToast(`เพิ่ม ${menuItem.name} ลงตะกร้าแล้ว`, 'success');
+
+            } catch (error) {
+                console.error('❌ Error adding to cart:', error);
+                showToast('❌ ไม่สามารถเพิ่มสินค้าได้', 'error');
+            }
+        }
+
+        function updateCartDisplay() {
+            const cartContainer = document.getElementById('cart-items');
+            const totalElement = document.getElementById('cart-total');
+            const checkoutBtn = document.getElementById('checkout-btn');
+
+            if (!cartContainer || !totalElement || !checkoutBtn) return;
+
+            if (AppState.cart.length === 0) {
+                cartContainer.innerHTML = '<p class="text-center text-gray-500 py-8">ยังไม่มีสินค้าในตะกร้า</p>';
+                totalElement.textContent = Utils.formatCurrency(0);
+                checkoutBtn.disabled = true;
+                return;
+            }
+
+            cartContainer.innerHTML = AppState.cart.map(item => `
+                <div class="cart-item flex justify-between items-center p-2 border-b">
+                    <div class="flex-1">
+                        <h5 class="font-medium">${item.name}</h5>
+                        <p class="text-sm text-gray-500">${Utils.formatCurrency(item.price)}</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button class="btn btn-sm btn-outline" onclick="updateCartItemQuantity('${item.id}', -1)">-</button>
+                        <span class="px-2">${item.quantity}</span>
+                        <button class="btn btn-sm btn-outline" onclick="updateCartItemQuantity('${item.id}', 1)">+</button>
+                        <button class="btn btn-sm btn-error" onclick="removeFromCart('${item.id}')">🗑</button>
+                    </div>
+                </div>
+            `).join('');
+
+            const total = AppState.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            totalElement.textContent = Utils.formatCurrency(total);
+            checkoutBtn.disabled = false;
+        }
+
+        function updateCartItemQuantity(itemId, change) {
+            const item = AppState.cart.find(item => item.id === itemId);
+            if (!item) return;
+
+            item.quantity += change;
+
+            if (item.quantity <= 0) {
+                removeFromCart(itemId);
+            } else {
+                updateCartDisplay();
+            }
+        }
+
+        function removeFromCart(itemId) {
+            AppState.cart = AppState.cart.filter(item => item.id !== itemId);
+            updateCartDisplay();
+        }
+
+        async function editIngredient(ingredientId) {
+            try {
+                const ingredient = await window.db.findById('ingredients', ingredientId);
+                if (!ingredient) return;
+
+                const modalHTML = `
+                    <div id="edit-ingredient-modal" class="modal active">
+                        <div class="modal-backdrop" onclick="closeEditIngredientModal()"></div>
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 class="modal-title">แก้ไขวัตถุดิบ</h3>
+                                <button class="modal-close" onclick="closeEditIngredientModal()">×</button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="edit-ingredient-form">
+                                    <input type="hidden" id="edit-ingredient-id" value="${ingredient.id}">
+                                    <div class="form-group">
+                                        <label class="form-label">ชื่อวัตถุดิบ</label>
+                                        <input type="text" class="form-input" id="edit-ingredient-name" value="${ingredient.name}" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">หน่วย</label>
+                                        <input type="text" class="form-input" id="edit-ingredient-unit" value="${ingredient.unit}" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">ต้นทุนต่อหน่วย (บาท)</label>
+                                        <input type="number" class="form-input" id="edit-ingredient-cost" value="${ingredient.cost_per_unit}" min="0" step="0.01" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">จำนวนปัจจุบัน</label>
+                                        <input type="number" class="form-input" id="edit-ingredient-quantity" value="${ingredient.quantity}" min="0" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">สต็อคขั้นต่ำ</label>
+                                        <input type="number" class="form-input" id="edit-ingredient-min-stock" value="${ingredient.minimum_stock}" min="0" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">ผู้จำหน่าย</label>
+                                        <input type="text" class="form-input" id="edit-ingredient-supplier" value="${ingredient.supplier || ''}">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" onclick="closeEditIngredientModal()">ยกเลิก</button>
+                                <button type="button" class="btn btn-primary" onclick="saveEditedIngredient()">บันทึก</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+            } catch (error) {
+                console.error('❌ Error loading ingredient for edit:', error);
+            }
+        }
+
+        function closeEditIngredientModal() {
+            const modal = document.getElementById('edit-ingredient-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        async function saveEditedIngredient() {
+            try {
+                const id = document.getElementById('edit-ingredient-id').value;
+                const ingredient = {
+                    name: document.getElementById('edit-ingredient-name').value,
+                    unit: document.getElementById('edit-ingredient-unit').value,
+                    cost_per_unit: parseFloat(document.getElementById('edit-ingredient-cost').value),
+                    quantity: parseInt(document.getElementById('edit-ingredient-quantity').value),
+                    minimum_stock: parseInt(document.getElementById('edit-ingredient-min-stock').value),
+                    supplier: document.getElementById('edit-ingredient-supplier').value
+                };
+
+                await window.db.update('ingredients', id, ingredient);
+                showToast('✅ อัพเดทวัตถุดิบสำเร็จ', 'success');
+                closeEditIngredientModal();
+                await loadIngredients();
+
+            } catch (error) {
+                console.error('❌ Error updating ingredient:', error);
+                showToast('❌ ไม่สามารถอัพเดทวัตถุดิบได้', 'error');
+            }
+        }
+
+        async function restockIngredient(ingredientId) {
+            try {
+                const ingredient = await window.db.findById('ingredients', ingredientId);
+                if (!ingredient) return;
+
+                const modalHTML = `
+                    <div id="restock-modal" class="modal active">
+                        <div class="modal-backdrop" onclick="closeRestockModal()"></div>
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 class="modal-title">เติมสต็อค: ${ingredient.name}</h3>
+                                <button class="modal-close" onclick="closeRestockModal()">×</button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="restock-form">
+                                    <input type="hidden" id="restock-ingredient-id" value="${ingredient.id}">
+                                    <div class="form-group">
+                                        <label class="form-label">จำนวนปัจจุบัน</label>
+                                        <input type="number" class="form-input" value="${ingredient.quantity}" disabled>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">จำนวนที่เพิ่ม</label>
+                                        <input type="number" class="form-input" id="restock-amount" placeholder="0" min="0" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">หมายเหตุ</label>
+                                        <input type="text" class="form-input" id="restock-note" placeholder="เช่น ซื้อเพิ่ม, ปรับสต็อค">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" onclick="closeRestockModal()">ยกเลิก</button>
+                                <button type="button" class="btn btn-primary" onclick="confirmRestock()">เติมสต็อค</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+            } catch (error) {
+                console.error('❌ Error loading ingredient for restock:', error);
+            }
+        }
+
+        function closeRestockModal() {
+            const modal = document.getElementById('restock-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        async function confirmRestock() {
+            try {
+                const ingredientId = document.getElementById('restock-ingredient-id').value;
+                const additionalAmount = parseInt(document.getElementById('restock-amount').value);
+                const note = document.getElementById('restock-note').value;
+
+                if (!additionalAmount || additionalAmount <= 0) {
+                    showToast('❌ กรุณาระบุจำนวนที่ถูกต้อง', 'error');
+                    return;
+                }
+
+                const ingredient = await window.db.findById('ingredients', ingredientId);
+                const newQuantity = ingredient.quantity + additionalAmount;
+
+                await window.db.update('ingredients', ingredientId, {
+                    quantity: newQuantity
+                });
+
+                // Record transaction
+                await window.db.create('transactions', {
+                    type: 'restock',
+                    item_id: ingredientId,
+                    item_name: ingredient.name,
+                    quantity: additionalAmount,
+                    note: note,
+                    created_at: new Date().toISOString()
+                });
+
+                showToast(`✅ เติมสต็อค ${ingredient.name} สำเร็จ`, 'success');
+                closeRestockModal();
+                await loadIngredients();
+
+            } catch (error) {
+                console.error('❌ Error restocking ingredient:', error);
+                showToast('❌ ไม่สามารถเติมสต็อคได้', 'error');
             }
         }
 
@@ -1893,26 +2260,35 @@
             closeInventoryModal();
             renderInventory();
         }
-        function loadDashboard() {
-            const todaySales = AppState.sales
-                .filter(sale => {
-                    const today = new Date().toDateString();
-                    return new Date(sale.date).toDateString() === today;
-                })
-                .reduce((total, sale) => total + sale.amount, 0);
+        async function loadDashboard() {
+            if (!window.db || !window.db.isReady) {
+                console.log('⏳ Database not ready yet, retrying...');
+                setTimeout(loadDashboard, 1000);
+                return;
+            }
 
-            const todayOrders = AppState.sales
-                .filter(sale => {
-                    const today = new Date().toDateString();
-                    return new Date(sale.date).toDateString() === today;
-                }).length;
+            try {
+                // Get dashboard data from local database
+                const dashboardData = await window.db.getDashboardData();
 
-            document.getElementById('today-sales').textContent = Utils.formatCurrency(todaySales);
-            document.getElementById('today-orders').textContent = todayOrders.toString();
-            document.getElementById('last-update').textContent = new Date().toLocaleTimeString('th-TH');
+                // Update UI elements
+                document.getElementById('today-sales').textContent = Utils.formatCurrency(dashboardData.todaySales);
+                document.getElementById('today-orders').textContent = dashboardData.salesCount.toString();
+                document.getElementById('last-update').textContent = new Date().toLocaleTimeString('th-TH');
 
-            // Load sales chart
-            loadSalesChart();
+                // Update low stock alerts
+                if (dashboardData.lowStockCount > 0) {
+                    showToast(`⚠️ มีวัตถุดิบใกล้หมด ${dashboardData.lowStockCount} รายการ`, 'warning');
+                }
+
+                // Load sales chart with real data
+                loadSalesChart();
+
+                console.log('✅ Dashboard loaded successfully');
+            } catch (error) {
+                console.error('❌ Error loading dashboard:', error);
+                showToast('ไม่สามารถโหลดข้อมูลได้', 'error');
+            }
         }
 
         function loadSalesChart() {
@@ -2633,6 +3009,153 @@
             }
         }
 
+        // Ingredients Management Functions
+        async function loadIngredients() {
+            try {
+                if (!window.db || !window.db.isReady) {
+                    console.log('⏳ Database not ready for ingredients, retrying...');
+                    setTimeout(loadIngredients, 1000);
+                    return;
+                }
+
+                const ingredients = await window.db.getInventoryItems();
+                const container = document.getElementById('ingredients-container');
+
+                if (!container) return;
+
+                container.innerHTML = ingredients.map(ingredient => `
+                    <div class="card" data-ingredient-id="${ingredient.id}">
+                        <div class="card-body">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="text-lg font-semibold">${ingredient.name}</h4>
+                                    <p class="text-sm text-gray-500 mb-2">${ingredient.supplier || ''}</p>
+                                    <div class="flex gap-4 text-sm mb-2">
+                                        <span class="text-blue-600">คงเหลือ: ${ingredient.quantity} ${ingredient.unit}</span>
+                                        <span class="text-green-600">ต้นทุน: ${Utils.formatCurrency(ingredient.cost_per_unit)}/${ingredient.unit}</span>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        ${ingredient.quantity <= ingredient.minimum_stock ? '<span class="badge badge-error">สต็อคต่ำ</span>' : ''}
+                                        ${ingredient.quantity === 0 ? '<span class="badge badge-error">หมดสต็อค</span>' : ''}
+                                    </div>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button class="btn btn-sm btn-secondary" onclick="editIngredient('${ingredient.id}')">แก้ไข</button>
+                                    <button class="btn btn-sm btn-primary" onclick="restockIngredient('${ingredient.id}')">เติมสต็อค</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error('❌ Error loading ingredients:', error);
+            }
+        }
+
+        async function showAddIngredientModal() {
+            // Similar to menu item modal but for ingredients
+            const modalHTML = `
+                <div id="add-ingredient-modal" class="modal active">
+                    <div class="modal-backdrop" onclick="closeAddIngredientModal()"></div>
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="modal-title">เพิ่มวัตถุดิบใหม่</h3>
+                            <button class="modal-close" onclick="closeAddIngredientModal()">×</button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="add-ingredient-form">
+                                <div class="form-group">
+                                    <label class="form-label">ชื่อวัตถุดิบ</label>
+                                    <input type="text" class="form-input" id="ingredient-name" placeholder="เช่น ขนมปังขาว" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">หน่วย</label>
+                                    <input type="text" class="form-input" id="ingredient-unit" placeholder="เช่น แผ่น, กรัม" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">ต้นทุนต่อหน่วย (บาท)</label>
+                                    <input type="number" class="form-input" id="ingredient-cost" placeholder="2.00" min="0" step="0.01" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">จำนวนเริ่มต้น</label>
+                                    <input type="number" class="form-input" id="ingredient-quantity" placeholder="100" min="0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">สต็อคขั้นต่ำ</label>
+                                    <input type="number" class="form-input" id="ingredient-min-stock" placeholder="10" min="0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">ผู้จำหน่าย</label>
+                                    <input type="text" class="form-input" id="ingredient-supplier" placeholder="ชื่อผู้จำหน่าย">
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" onclick="closeAddIngredientModal()">ยกเลิก</button>
+                            <button type="button" class="btn btn-primary" onclick="saveIngredient()">บันทึก</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        }
+
+        function closeAddIngredientModal() {
+            const modal = document.getElementById('add-ingredient-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        async function saveIngredient() {
+            try {
+                const ingredient = {
+                    name: document.getElementById('ingredient-name').value,
+                    unit: document.getElementById('ingredient-unit').value,
+                    cost_per_unit: parseFloat(document.getElementById('ingredient-cost').value),
+                    quantity: parseInt(document.getElementById('ingredient-quantity').value),
+                    minimum_stock: parseInt(document.getElementById('ingredient-min-stock').value),
+                    supplier: document.getElementById('ingredient-supplier').value,
+                    category: 'general'
+                };
+
+                await window.db.create('ingredients', ingredient);
+                showToast('✅ เพิ่มวัตถุดิบสำเร็จ', 'success');
+                closeAddIngredientModal();
+                await loadIngredients();
+
+            } catch (error) {
+                console.error('❌ Error saving ingredient:', error);
+                showToast('❌ ไม่สามารถบันทึกวัตถุดิบได้', 'error');
+            }
+        }
+
+        function filterIngredients() {
+            const searchTerm = document.getElementById('ingredient-search').value.toLowerCase();
+            const statusFilter = document.getElementById('ingredient-status-filter').value;
+            const ingredientCards = document.querySelectorAll('#ingredients-container .card');
+
+            ingredientCards.forEach(card => {
+                const ingredientName = card.querySelector('h4').textContent.toLowerCase();
+                const hasLowStockBadge = card.querySelector('.badge-error');
+
+                const matchesSearch = ingredientName.includes(searchTerm);
+                let matchesStatus = true;
+
+                if (statusFilter === 'low_stock') {
+                    matchesStatus = hasLowStockBadge !== null;
+                } else if (statusFilter === 'out_of_stock') {
+                    matchesStatus = hasLowStockBadge && hasLowStockBadge.textContent.includes('หมดสต็อค');
+                } else if (statusFilter === 'in_stock') {
+                    matchesStatus = hasLowStockBadge === null;
+                }
+
+                card.style.display = matchesSearch && matchesStatus ? 'block' : 'none';
+            });
+        }
+
         // Reports Functions
         function loadReports() {
             loadSalesReport();
@@ -2713,6 +3236,98 @@
                     </div>
                 </div>
             `).join('');
+        }
+
+        function showManageCategoriesModal() {
+            // Create and show a modal for managing menu categories
+            const modalHTML = `
+                <div id="manage-categories-modal" class="modal active">
+                    <div class="modal-backdrop" onclick="closeManageCategoriesModal()"></div>
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="modal-title">จัดการหมวดหมู่เมนู</h3>
+                            <button class="modal-close" onclick="closeManageCategoriesModal()">×</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label class="form-label">เพิ่มหมวดหมู่ใหม่</label>
+                                <div class="flex gap-2">
+                                    <input type="text" class="form-input" id="new-category-name" placeholder="ชื่อหมวดหมู่">
+                                    <button class="btn btn-primary" onclick="addCategory()">เพิ่ม</button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">หมวดหมู่ที่มีอยู่</label>
+                                <div id="categories-list" class="space-y-2">
+                                    <div class="p-2 border rounded flex justify-between items-center">
+                                        <span>แซนด์วิช</span>
+                                        <button class="btn btn-sm btn-error" onclick="removeCategory('แซนด์วิช')">ลบ</button>
+                                    </div>
+                                    <div class="p-2 border rounded flex justify-between items-center">
+                                        <span>เครื่องดื่ม</span>
+                                        <button class="btn btn-sm btn-error" onclick="removeCategory('เครื่องดื่ม')">ลบ</button>
+                                    </div>
+                                    <div class="p-2 border rounded flex justify-between items-center">
+                                        <span>ของหวาน</span>
+                                        <button class="btn btn-sm btn-error" onclick="removeCategory('ของหวาน')">ลบ</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" onclick="closeManageCategoriesModal()">ปิด</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        }
+
+        function closeManageCategoriesModal() {
+            const modal = document.getElementById('manage-categories-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        function addCategory() {
+            const categoryName = document.getElementById('new-category-name').value.trim();
+            if (!categoryName) {
+                showToast('กรุณาระบุชื่อหมวดหมู่', 'error');
+                return;
+            }
+
+            // Add to categories list (this is a simple implementation)
+            const categoriesList = document.getElementById('categories-list');
+            const categoryDiv = document.createElement('div');
+            categoryDiv.className = 'p-2 border rounded flex justify-between items-center';
+            categoryDiv.innerHTML = `
+                <span>${categoryName}</span>
+                <button class="btn btn-sm btn-error" onclick="removeCategory('${categoryName}')">ลบ</button>
+            `;
+            categoriesList.appendChild(categoryDiv);
+
+            document.getElementById('new-category-name').value = '';
+            showToast(`เพิ่มหมวดหมู่ ${categoryName} สำเร็จ`, 'success');
+        }
+
+        function removeCategory(categoryName) {
+            if (confirm(`ต้องการลบหมวดหมู่ "${categoryName}" หรือไม่?`)) {
+                // Find and remove the category element
+                const categoriesList = document.getElementById('categories-list');
+                const categoryElements = categoriesList.children;
+
+                for (let i = 0; i < categoryElements.length; i++) {
+                    const span = categoryElements[i].querySelector('span');
+                    if (span && span.textContent === categoryName) {
+                        categoryElements[i].remove();
+                        break;
+                    }
+                }
+
+                showToast(`ลบหมวดหมู่ ${categoryName} สำเร็จ`, 'success');
+            }
         }
 
         // Modal Functions
@@ -2823,6 +3438,203 @@
 
             console.log('🥪 POS System initialized successfully!');
         });
+
+        // Menu Management Functions
+        async function showAddMenuItemModal() {
+            // Create and show modal for adding menu items
+            const modalHTML = `
+                <div id="add-menu-item-modal" class="modal active">
+                    <div class="modal-backdrop" onclick="closeAddMenuItemModal()"></div>
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="modal-title">เพิ่มเมนูใหม่</h3>
+                            <button class="modal-close" onclick="closeAddMenuItemModal()">×</button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="add-menu-item-form">
+                                <div class="form-group">
+                                    <label class="form-label">ชื่อเมนู</label>
+                                    <input type="text" class="form-input" id="menu-name" placeholder="เช่น แฮมชีส" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">ราคา (บาท)</label>
+                                    <input type="number" class="form-input" id="menu-price" placeholder="45.00" min="0" step="0.01" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">ต้นทุน (บาท)</label>
+                                    <input type="number" class="form-input" id="menu-cost" placeholder="12.00" min="0" step="0.01" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">หมวดหมู่</label>
+                                    <select class="form-select" id="menu-category" required>
+                                        <option value="">เลือกหมวดหมู่</option>
+                                        <option value="cat_sandwich">🥪 แซนด์วิช</option>
+                                        <option value="cat_beverage">🥤 เครื่องดื่ม</option>
+                                        <option value="cat_side">🍟 เครื่องเคียง</option>
+                                        <option value="cat_dessert">🍰 ของหวาน</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">คำอธิบาย</label>
+                                    <textarea class="form-input" id="menu-description" placeholder="คำอธิบายเมนู" rows="3"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">เวลาเตรียม (นาที)</label>
+                                    <input type="number" class="form-input" id="menu-prep-time" placeholder="5" min="1" value="5">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-checkbox">
+                                        <input type="checkbox" id="menu-featured">
+                                        <span>เมนูแนะนำ</span>
+                                    </label>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" onclick="closeAddMenuItemModal()">ยกเลิก</button>
+                            <button type="button" class="btn btn-primary" onclick="saveMenuItem()">บันทึก</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        }
+
+        function closeAddMenuItemModal() {
+            const modal = document.getElementById('add-menu-item-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        async function saveMenuItem() {
+            try {
+                const form = document.getElementById('add-menu-item-form');
+                const formData = new FormData(form);
+
+                const menuItem = {
+                    name: document.getElementById('menu-name').value,
+                    price: parseFloat(document.getElementById('menu-price').value),
+                    cost: parseFloat(document.getElementById('menu-cost').value),
+                    category: document.getElementById('menu-category').value,
+                    description: document.getElementById('menu-description').value,
+                    prep_time: parseInt(document.getElementById('menu-prep-time').value) || 5,
+                    is_featured: document.getElementById('menu-featured').checked,
+                    is_available: true
+                };
+
+                await window.db.create('menu_items', menuItem);
+                showToast('✅ เพิ่มเมนูสำเร็จ', 'success');
+                closeAddMenuItemModal();
+                await loadMenuItems();
+
+            } catch (error) {
+                console.error('❌ Error saving menu item:', error);
+                showToast('❌ ไม่สามารถบันทึกเมนูได้', 'error');
+            }
+        }
+
+        async function loadMenuItems() {
+            try {
+                const menuItems = await window.db.getMenuItems();
+                const container = document.getElementById('menu-items-container');
+
+                if (!container) return;
+
+                container.innerHTML = menuItems.map(item => `
+                    <div class="card" data-menu-id="${item.id}">
+                        <div class="card-body">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="text-lg font-semibold">${item.name}</h4>
+                                    <p class="text-sm text-gray-500 mb-2">${item.description || ''}</p>
+                                    <div class="flex gap-4 text-sm">
+                                        <span class="text-green-600">ราคา: ${Utils.formatCurrency(item.price)}</span>
+                                        <span class="text-red-600">ต้นทุน: ${Utils.formatCurrency(item.cost)}</span>
+                                        <span class="text-blue-600">กำไร: ${Utils.formatCurrency(item.price - item.cost)}</span>
+                                    </div>
+                                    ${item.is_featured ? '<span class="badge badge-warning">เมนูแนะนำ</span>' : ''}
+                                    ${!item.is_available ? '<span class="badge badge-error">ไม่พร้อมจำหน่าย</span>' : ''}
+                                </div>
+                                <div class="flex gap-2">
+                                    <button class="btn btn-sm btn-secondary" onclick="editMenuItem('${item.id}')">แก้ไข</button>
+                                    <button class="btn btn-sm ${item.is_available ? 'btn-warning' : 'btn-success'}"
+                                        onclick="toggleMenuAvailability('${item.id}', ${!item.is_available})">
+                                        ${item.is_available ? 'ซ่อน' : 'แสดง'}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error('❌ Error loading menu items:', error);
+            }
+        }
+
+        async function toggleMenuAvailability(itemId, isAvailable) {
+            try {
+                await window.db.update('menu_items', itemId, { is_available: isAvailable });
+                showToast(`✅ ${isAvailable ? 'แสดง' : 'ซ่อน'}เมนูแล้ว`, 'success');
+                await loadMenuItems();
+            } catch (error) {
+                console.error('❌ Error toggling menu availability:', error);
+                showToast('❌ ไม่สามารถอัพเดทสถานะเมนูได้', 'error');
+            }
+        }
+
+        function filterMenuItems() {
+            const searchTerm = document.getElementById('menu-search').value.toLowerCase();
+            const categoryFilter = document.getElementById('menu-category-filter').value;
+            const menuCards = document.querySelectorAll('#menu-items-container .card');
+
+            menuCards.forEach(card => {
+                const menuId = card.dataset.menuId;
+                const menuName = card.querySelector('h4').textContent.toLowerCase();
+                const menuCategory = card.dataset.category || '';
+
+                const matchesSearch = menuName.includes(searchTerm);
+                const matchesCategory = !categoryFilter || menuCategory === categoryFilter;
+
+                card.style.display = matchesSearch && matchesCategory ? 'block' : 'none';
+            });
+        }
+
+        // Data export/import functions
+        async function exportData() {
+            try {
+                const data = await window.db.exportData();
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `sandwich-pos-backup-${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                showToast('✅ ส่งออกข้อมูลสำเร็จ', 'success');
+            } catch (error) {
+                console.error('❌ Error exporting data:', error);
+                showToast('❌ ไม่สามารถส่งออกข้อมูลได้', 'error');
+            }
+        }
+
+        async function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            try {
+                const text = await file.text();
+                const data = JSON.parse(text);
+                await window.db.importData(data);
+                showToast('✅ นำเข้าข้อมูลสำเร็จ', 'success');
+                location.reload(); // Refresh to show imported data
+            } catch (error) {
+                console.error('❌ Error importing data:', error);
+                showToast('❌ ไม่สามารถนำเข้าข้อมูลได้', 'error');
+            }
+        }
 
         // Service Worker for offline support (optional)
         if ('serviceWorker' in navigator) {

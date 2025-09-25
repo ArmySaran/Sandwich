@@ -1,7 +1,7 @@
 {
-  "name": "sandwich-pos",
-  "version": "2.0.0",
-  "description": "Modern restaurant POS system with real-time analytics and inventory management",
+  "name": "sandwich-pos-local",
+  "version": "3.0.0",
+  "description": "Local restaurant POS system with IndexedDB storage and offline-first architecture",
   "main": "index.html",
   "scripts": {
     "dev": "python -m http.server 8000",
@@ -18,7 +18,9 @@
     "inventory",
     "analytics",
     "pwa",
-    "supabase",
+    "indexeddb",
+    "offline-first",
+    "local-database",
     "thai-restaurant",
     "sandwich-shop"
   ],
