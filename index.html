@@ -2402,12 +2402,9 @@
         }
 
         // Show toast notification
-        let showToast = window.showToast;
-        if (typeof showToast !== 'function') {
-            showToast = (message, type = 'info', duration = 3000) => {
-                Toast.show(message, type, duration);
-            };
-        }
+        var showToast = window.showToast || function(message, type = 'info', duration = 3000) {
+            Toast.show(message, type, duration);
+        };
         window.showToast = showToast;
 
         // Format date function
